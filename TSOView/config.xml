@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TSOConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ClientSize>
+    <Width>800</Width>
+    <Height>600</Height>
+  </ClientSize>
+  <RecordStep>5</RecordStep>
+  <Position>
+    <X>0.0</X>
+    <Y>10</Y>
+    <Z>44</Z>
+  </Position>
+  <Fov>30</Fov>
+  <Znear>1.0</Znear>
+  <Zfar>1000.0</Zfar>
+</TSOConfig>

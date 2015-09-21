@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OcuConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Position>
+    <X>0.0</X>
+    <Y>15</Y>
+    <Z>10</Z>
+  </Position>
+  <Angle>0.02</Angle>
+  <Speed>0.5</Speed>
+  <Scale>1.0</Scale>
+  <Znear>1.0</Znear>
+  <Zfar>1000.0</Zfar>
+  <Sneak>
+    <Y>5</Y>
+    <Speed>0.15</Speed>
+  </Sneak>
+</OcuConfig>

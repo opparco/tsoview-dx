@@ -1,0 +1,9 @@
+/build
+/debug
+bin
+obj
+*.dll
+*.exe
+*.suo
+*.csproj.user
+/doc
