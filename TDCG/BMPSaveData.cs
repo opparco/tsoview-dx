@@ -22,7 +22,7 @@ namespace TDCG
         {
             bitmap = new Bitmap(stream);
 
-            // Lock the bitmap's bits.  
+            // Lock the bitmap's bits.
             Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
             System.Drawing.Imaging.BitmapData bitmapData =
                 bitmap.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadOnly,

@@ -283,7 +283,7 @@ namespace TSOView
                 Usage = SharpDX.DXGI.Usage.RenderTargetOutput,
                 OutputHandle = control.Handle,
                 IsWindowed = true,
-                ModeDescription = new SharpDX.DXGI.ModeDescription(0, 0, new SharpDX.DXGI.Rational(60, 1), SharpDX.DXGI.Format.R8G8B8A8_UNorm),
+                ModeDescription = new SharpDX.DXGI.ModeDescription(0, 0, new SharpDX.DXGI.Rational(60, 1), SharpDX.DXGI.Format.B8G8R8A8_UNorm),
                 SampleDescription = new SharpDX.DXGI.SampleDescription(4, 0),
                 Flags = SharpDX.DXGI.SwapChainFlags.AllowModeSwitch,
                 SwapEffect = SharpDX.DXGI.SwapEffect.Discard
@@ -704,24 +704,62 @@ namespace TSOView
         /// <param name="file">ファイル名</param>
         public void SaveToBitmap(string file)
         {
-            /*
-            using (Surface sf = device.GetBackBuffer(0, 0))
-                if (sf != null)
-                    Surface.ToFile(sf, file, ImageFileFormat.Bmp);
-            */
-        }
+            var intermediateDesc = buf0.Description;
+            intermediateDesc.SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0);
 
-        /// <summary>
-        /// バックバッファをPNG形式でファイルに保存します。
-        /// </summary>
-        /// <param name="file">ファイル名</param>
-        public void SaveToPng(string file)
-        {
-            /*
-            using (Surface sf = device.GetBackBuffer(0, 0))
-                if (sf != null)
-                    Surface.ToFile(sf, file, ImageFileFormat.Png);
-            */
+            var desc = buf0.Description;
+            desc.BindFlags = SharpDX.Direct3D11.BindFlags.None;
+            desc.Usage = SharpDX.Direct3D11.ResourceUsage.Staging;
+            desc.CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.Read;
+            desc.SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0);
+
+            using(Texture2D intermediate = new SharpDX.Direct3D11.Texture2D(device, intermediateDesc))
+            {
+                ctx.ResolveSubresource(buf0, 0, intermediate, 0, buf0.Description.Format);
+
+            using (Texture2D buf1 = new SharpDX.Direct3D11.Texture2D(device, desc))
+            {
+                ctx.CopyResource(intermediate, buf1);
+
+                DataStream stream;
+                ctx.MapSubresource(buf1, 0, MapMode.Read, MapFlags.None, out stream);
+                IntPtr src = stream.DataPointer;
+
+                using (System.Drawing.Bitmap bitmap =
+                        new System.Drawing.Bitmap(desc.Width, desc.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
+                {
+                    // Lock the bitmap's bits.
+                    System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
+                    System.Drawing.Imaging.BitmapData bitmapData =
+                        bitmap.LockBits(rect, System.Drawing.Imaging.ImageLockMode.WriteOnly,
+                        bitmap.PixelFormat);
+
+                    // Get the address of the first line.
+                    IntPtr ptr = bitmapData.Scan0;
+
+#if false
+                    Utilities.CopyMemory(ptr, src, bitmapData.Stride * bitmapData.Height);
+#endif
+
+                    // drop Alpha ch.
+                    for (int y = 0; y < bitmapData.Height; y++)
+                    {
+                        for (int x = 0; x < bitmapData.Width; x++)
+                        {
+                            Utilities.CopyMemory(ptr, src, 3);
+                            ptr = IntPtr.Add(ptr, 3);
+                            src = IntPtr.Add(src, 4);
+                        }
+                    }
+
+                    // Unlock the bits.
+                    bitmap.UnlockBits(bitmapData);
+
+                    bitmap.Save(file);
+                }
+                ctx.UnmapSubresource(buf1, 0);
+            }
+            }
         }
 
         /// <summary>

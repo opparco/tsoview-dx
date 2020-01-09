@@ -102,7 +102,7 @@ public partial class TSOForm : RenderForm
 
         if (!keyboardState.IsPressed(keySave) && currentKeyboardState.IsPressed(keySave))
         {
-            viewer.SaveToBitmap("sample.bmp");
+            viewer.SaveToBitmap("sample.png");
         }
 
         if (!keyboardState.IsPressed(keyMotion) && currentKeyboardState.IsPressed(keyMotion))
