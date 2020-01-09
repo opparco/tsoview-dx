@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.960
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDCG", "TDCG\TDCG.csproj", "{30D26679-E876-46FC-B8C0-E55146316C8C}"
 EndProject
@@ -8,13 +8,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSOView", "TSOView\TSOView.
 	ProjectSection(ProjectDependencies) = postProject
 		{30D26679-E876-46FC-B8C0-E55146316C8C} = {30D26679-E876-46FC-B8C0-E55146316C8C}
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcuView", "OcuView\OcuView.csproj", "{ED0BF156-84E6-483C-8872-D0C3B0785E8F}"
-	ProjectSection(ProjectDependencies) = postProject
-		{30D26679-E876-46FC-B8C0-E55146316C8C} = {30D26679-E876-46FC-B8C0-E55146316C8C}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HmdDump", "HmdDump\HmdDump.csproj", "{729186B1-D4BC-4199-92B5-89944F6B8A06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,16 +23,11 @@ Global
 		{C904AF6C-EC98-4EF5-90DB-8A1575ED595C}.Debug|x86.Build.0 = Debug|x86
 		{C904AF6C-EC98-4EF5-90DB-8A1575ED595C}.Release|x86.ActiveCfg = Release|x86
 		{C904AF6C-EC98-4EF5-90DB-8A1575ED595C}.Release|x86.Build.0 = Release|x86
-		{ED0BF156-84E6-483C-8872-D0C3B0785E8F}.Debug|x86.ActiveCfg = Debug|x86
-		{ED0BF156-84E6-483C-8872-D0C3B0785E8F}.Debug|x86.Build.0 = Debug|x86
-		{ED0BF156-84E6-483C-8872-D0C3B0785E8F}.Release|x86.ActiveCfg = Release|x86
-		{ED0BF156-84E6-483C-8872-D0C3B0785E8F}.Release|x86.Build.0 = Release|x86
-		{729186B1-D4BC-4199-92B5-89944F6B8A06}.Debug|x86.ActiveCfg = Debug|x86
-		{729186B1-D4BC-4199-92B5-89944F6B8A06}.Debug|x86.Build.0 = Debug|x86
-		{729186B1-D4BC-4199-92B5-89944F6B8A06}.Release|x86.ActiveCfg = Release|x86
-		{729186B1-D4BC-4199-92B5-89944F6B8A06}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE31A7B2-2BCB-4EF3-BF0C-9E2B8B23B53E}
 	EndGlobalSection
 EndGlobal

@@ -34,7 +34,6 @@ static class Program
 
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-        //Application.Run(new TSOForm(tso_config, args));
 
         TSOForm form = new TSOForm(tso_config, args);
 

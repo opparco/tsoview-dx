@@ -954,28 +954,23 @@ namespace TDCG
             if (data.Length == 0)
                 return;
 
-            var bitmap = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-            // Lock the bitmap's bits.  
-            var rect = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
-            var bitmapData =
-                bitmap.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadWrite,
-                bitmap.PixelFormat);
-
-            // Get the address of the first line.
-            IntPtr ptr = bitmapData.Scan0;
-
-            // Copy the RGB values back to the bitmap
-            System.Runtime.InteropServices.Marshal.Copy(data, 0, ptr, data.Length);
-
-            // Unlock the bits.
-            bitmap.UnlockBits(bitmapData);
-
-            MemoryStream ms = new MemoryStream();
-            bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            long position = ms.Seek(0, SeekOrigin.Current);
-            ms.Seek(0, SeekOrigin.Begin);
-            d3d_tex = Texture2D.FromStream<Texture2D>(device, ms, (int)position);
+            using (var buffer = new SharpDX.DataStream(data.Length, true, true))
+            {
+                buffer.Write(data, 0, data.Length);
+                d3d_tex = new SharpDX.Direct3D11.Texture2D(device, new SharpDX.Direct3D11.Texture2DDescription()
+                {
+                    Width = width,
+                    Height = height,
+                    ArraySize = 1,
+                    BindFlags = SharpDX.Direct3D11.BindFlags.ShaderResource,
+                    Usage = SharpDX.Direct3D11.ResourceUsage.Immutable,
+                    CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.None,
+                    Format = SharpDX.DXGI.Format.B8G8R8A8_UNorm,
+                    MipLevels = 1,
+                    OptionFlags = SharpDX.Direct3D11.ResourceOptionFlags.None,
+                    SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0),
+                }, new SharpDX.DataRectangle(buffer.DataPointer, width * depth));
+            }
             d3d_tex_view = new ShaderResourceView(device, d3d_tex);
         }
 

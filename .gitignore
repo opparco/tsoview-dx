@@ -1,9 +1,9 @@
+.vs/
+obj/
 /build
 /debug
-bin
-obj
+/packages
 *.dll
 *.exe
 *.suo
 *.csproj.user
-/doc

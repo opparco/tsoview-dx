@@ -30,254 +30,252 @@ namespace TSOView
     /// <summary>
     /// TSOFileをDirect3D上でレンダリングします。
     /// </summary>
-public class Viewer : IDisposable
-{
-    /// <summary>
-    /// control
-    /// </summary>
-    protected Control control;
-
-    //protected Direct3D direct3d;
-
-    /// <summary>
-    /// device
-    /// </summary>
-    protected Device device;
-    protected DeviceContext ctx;
-    protected SharpDX.DXGI.Factory dxgi_factory;
-    protected SharpDX.DXGI.SwapChain swap_chain;
-    protected Viewport viewport;
-
-    /// <summary>
-    /// effect
-    /// </summary>
-    protected Effect effect;
-    InputLayout il;
-
-    EffectMatrixVariable World_variable;
-    EffectMatrixVariable WorldView_variable;
-    EffectMatrixVariable WorldViewProjection_variable;
-    /* for HUD */
-    EffectMatrixVariable Projection_variable;
-
-    /// <summary>
-    /// effect handle for LocalBoneMats
-    /// since v0.90
-    /// </summary>
-    EffectMatrixVariable LocalBoneMats_variable;
-
-    /// <summary>
-    /// effect handle for LightDirForced
-    /// since v0.90
-    /// </summary>
-    EffectVectorVariable LightDirForced_variable;
-
-    /// <summary>
-    /// effect handle for UVSCR
-    /// since v0.91
-    /// </summary>
-    EffectVectorVariable UVSCR_variable;
-
-    EffectConstantBuffer cb_variable;
-
-    EffectShaderResourceVariable ShadeTex_texture_variable;
-    EffectShaderResourceVariable ColorTex_texture_variable;
-
-    /// <summary>
-    /// buffer #0 (back buffer)
-    /// </summary>
-    protected Texture2D buf0 = null;
-    /// <summary>
-    /// view of buffer #0
-    /// </summary>
-    protected RenderTargetView buf0_view = null;
-
-    /// <summary>
-    /// ztexture
-    /// </summary>
-    protected Texture2D ztex = null;
-    /// <summary>
-    /// view of ztexture
-    /// </summary>
-    protected DepthStencilView ztex_view = null;
-
-    /// <summary>
-    /// Figure collection
-    /// </summary>
-    public FigureCollection figures = new FigureCollection();
-
-    /// <summary>
-    /// マウスポイントしているスクリーン座標
-    /// </summary>
-    protected Point lastScreenPoint = Point.Zero;
-
-    /// <summary>
-    /// viewerを生成します。
-    /// </summary>
-    public Viewer()
+    public class Viewer : IDisposable
     {
-        ScreenColor = SharpDX.Color.LightGray;
-    }
+        /// <summary>
+        /// control
+        /// </summary>
+        protected Control control;
 
-    /// マウスボタンを押したときに実行するハンドラ
-    protected virtual void form_OnMouseDown(object sender, MouseEventArgs e)
-    {
-        switch (e.Button)
+        //protected Direct3D direct3d;
+
+        /// <summary>
+        /// device
+        /// </summary>
+        protected Device device;
+        protected DeviceContext ctx;
+        protected SharpDX.DXGI.SwapChain swap_chain;
+        protected Viewport viewport;
+
+        /// <summary>
+        /// effect
+        /// </summary>
+        protected Effect effect;
+        InputLayout il;
+
+        EffectMatrixVariable World_variable;
+        EffectMatrixVariable WorldView_variable;
+        EffectMatrixVariable WorldViewProjection_variable;
+        /* for HUD */
+        EffectMatrixVariable Projection_variable;
+
+        /// <summary>
+        /// effect handle for LocalBoneMats
+        /// since v0.90
+        /// </summary>
+        EffectMatrixVariable LocalBoneMats_variable;
+
+        /// <summary>
+        /// effect handle for LightDirForced
+        /// since v0.90
+        /// </summary>
+        EffectVectorVariable LightDirForced_variable;
+
+        /// <summary>
+        /// effect handle for UVSCR
+        /// since v0.91
+        /// </summary>
+        EffectVectorVariable UVSCR_variable;
+
+        EffectConstantBuffer cb_variable;
+
+        EffectShaderResourceVariable ShadeTex_texture_variable;
+        EffectShaderResourceVariable ColorTex_texture_variable;
+
+        /// <summary>
+        /// buffer #0 (back buffer)
+        /// </summary>
+        protected Texture2D buf0 = null;
+        /// <summary>
+        /// view of buffer #0
+        /// </summary>
+        protected RenderTargetView buf0_view = null;
+
+        /// <summary>
+        /// ztexture
+        /// </summary>
+        protected Texture2D ztex = null;
+        /// <summary>
+        /// view of ztexture
+        /// </summary>
+        protected DepthStencilView ztex_view = null;
+
+        /// <summary>
+        /// Figure collection
+        /// </summary>
+        public FigureCollection figures = new FigureCollection();
+
+        /// <summary>
+        /// マウスポイントしているスクリーン座標
+        /// </summary>
+        protected Point lastScreenPoint = Point.Zero;
+
+        /// <summary>
+        /// viewerを生成します。
+        /// </summary>
+        public Viewer()
         {
-        case MouseButtons.Left:
-            if (Control.ModifierKeys == Keys.Control)
-                figures.SetLightDirection(ScreenToOrientation(e.X, e.Y));
-            else
+            ScreenColor = SharpDX.Color.LightGray;
+        }
+
+        /// マウスボタンを押したときに実行するハンドラ
+        protected virtual void form_OnMouseDown(object sender, MouseEventArgs e)
+        {
+            switch (e.Button)
             {
-                //おっぱいを触っているか判定する
-                bool touched = false;
+                case MouseButtons.Left:
+                    if (Control.ModifierKeys == Keys.Control)
+                        figures.SetLightDirection(ScreenToOrientation(e.X, e.Y));
+                    else
+                    {
+                        //おっぱいを触っているか判定する
+                        bool touched = false;
 
-                //注視点 on screen
-                float x = (float)(viewport.Width / 2);
-                float y = (float)(viewport.Height / 2);
+                        //注視点 on screen
+                        float x = (float)(viewport.Width / 2);
+                        float y = (float)(viewport.Height / 2);
 
-                Figure fig;
-                if (figures.TryGetFigure(out fig))
-                {
-                    // todo: figures.TryGetFigure again
-                    touched = touched || FindBoneOnScreenPoint(x, y, fig.Tmo.nodemap[TMONodePath.Chichi_Right3]);
-                    touched = touched || FindBoneOnScreenPoint(x, y, fig.Tmo.nodemap[TMONodePath.Chichi_Left3]);
-                }
-                if (touched)
-                    fig.ResetSpring();
+                        Figure fig;
+                        if (figures.TryGetFigure(out fig))
+                        {
+                            // todo: figures.TryGetFigure again
+                            touched = touched || FindBoneOnScreenPoint(x, y, fig.Tmo.nodemap[TMONodePath.Chichi_Right3]);
+                            touched = touched || FindBoneOnScreenPoint(x, y, fig.Tmo.nodemap[TMONodePath.Chichi_Left3]);
+                        }
+                        if (touched)
+                            fig.ResetSpring();
+                    }
+                    break;
             }
-            break;
+
+            lastScreenPoint.X = e.X;
+            lastScreenPoint.Y = e.Y;
         }
 
-        lastScreenPoint.X = e.X;
-        lastScreenPoint.Y = e.Y;
-    }
-
-    /// マウスを移動したときに実行するハンドラ
-    protected virtual void form_OnMouseMove(object sender, MouseEventArgs e)
-    {
-        int dx = e.X - lastScreenPoint.X;
-        int dy = e.Y - lastScreenPoint.Y;
-
-        switch (e.Button)
+        /// マウスを移動したときに実行するハンドラ
+        protected virtual void form_OnMouseMove(object sender, MouseEventArgs e)
         {
-        case MouseButtons.Left:
-            if (Control.ModifierKeys == Keys.Control)
-                figures.SetLightDirection(ScreenToOrientation(e.X, e.Y));
+            int dx = e.X - lastScreenPoint.X;
+            int dy = e.Y - lastScreenPoint.Y;
+
+            switch (e.Button)
+            {
+                case MouseButtons.Left:
+                    if (Control.ModifierKeys == Keys.Control)
+                        figures.SetLightDirection(ScreenToOrientation(e.X, e.Y));
+                    else
+                        Camera.RotateYawPitchRoll(-dx * 0.01f, -dy * 0.01f, 0.0f);
+                    break;
+                case MouseButtons.Middle:
+                    Camera.MoveView(-dx * 0.125f, dy * 0.125f, 0.0f);
+                    break;
+                case MouseButtons.Right:
+                    Camera.MoveView(0.0f, 0.0f, -dy * 0.125f);
+                    break;
+            }
+
+            lastScreenPoint.X = e.X;
+            lastScreenPoint.Y = e.Y;
+        }
+
+        // スクリーンの中心座標
+        private float screenCenterX = 800 / 2.0f;
+        private float screenCenterY = 600 / 2.0f;
+
+        /// <summary>
+        /// controlを保持します。スクリーンの中心座標を更新します。
+        /// </summary>
+        /// <param name="control">control</param>
+        protected void SetControl(Control control)
+        {
+            this.control = control;
+            screenCenterX = control.ClientSize.Width / 2.0f;
+            screenCenterY = control.ClientSize.Height / 2.0f;
+        }
+
+        /// <summary>
+        /// 指定スクリーン座標からスクリーン中心へ向かうベクトルを得ます。
+        /// </summary>
+        /// <param name="screenPointX">スクリーンX座標</param>
+        /// <param name="screenPointY">スクリーンY座標</param>
+        /// <returns>方向ベクトル</returns>
+        public Vector3 ScreenToOrientation(float screenPointX, float screenPointY)
+        {
+            float radius = 1.0f;
+            float x = -(screenPointX - screenCenterX) / (radius * screenCenterX);
+            float y = +(screenPointY - screenCenterY) / (radius * screenCenterY);
+            float z = 0.0f;
+            float mag = (x * x) + (y * y);
+
+            if (mag > 1.0f)
+            {
+                float scale = 1.0f / (float)Math.Sqrt(mag);
+                x *= scale;
+                y *= scale;
+            }
             else
-                Camera.RotateYawPitchRoll(-dx*0.01f, -dy*0.01f, 0.0f);
-            break;
-        case MouseButtons.Middle:
-            Camera.MoveView(-dx*0.125f, dy*0.125f, 0.0f);
-            break;
-        case MouseButtons.Right:
-            Camera.MoveView(0.0f, 0.0f, -dy*0.125f);
-            break;
+                z = (float)-Math.Sqrt(1.0f - mag);
+
+            return new Vector3(x, y, z);
         }
 
-        lastScreenPoint.X = e.X;
-        lastScreenPoint.Y = e.Y;
-    }
-
-    // スクリーンの中心座標
-    private float screenCenterX = 800 / 2.0f;
-    private float screenCenterY = 600 / 2.0f;
-
-    /// <summary>
-    /// controlを保持します。スクリーンの中心座標を更新します。
-    /// </summary>
-    /// <param name="control">control</param>
-    protected void SetControl(Control control)
-    {
-        this.control = control;
-        screenCenterX = control.ClientSize.Width / 2.0f;
-        screenCenterY = control.ClientSize.Height / 2.0f;
-    }
-
-    /// <summary>
-    /// 指定スクリーン座標からスクリーン中心へ向かうベクトルを得ます。
-    /// </summary>
-    /// <param name="screenPointX">スクリーンX座標</param>
-    /// <param name="screenPointY">スクリーンY座標</param>
-    /// <returns>方向ベクトル</returns>
-    public Vector3 ScreenToOrientation(float screenPointX, float screenPointY)
-    {
-        float radius = 1.0f;
-        float x = -(screenPointX - screenCenterX) / (radius * screenCenterX);
-        float y = +(screenPointY - screenCenterY) / (radius * screenCenterY);
-        float z = 0.0f;
-        float mag = (x*x) + (y*y);
-
-        if (mag > 1.0f)
+        /// <summary>
+        /// 指定テクスチャを開き直します。
+        /// </summary>
+        /// <param name="tex">テクスチャ</param>
+        public void OpenTexture(TSOTex tex)
         {
-            float scale = 1.0f / (float)Math.Sqrt(mag);
-            x *= scale;
-            y *= scale;
+            tex.Open(device);
         }
-        else
-            z = (float)-Math.Sqrt(1.0f - mag);
 
-        return new Vector3(x, y, z);
-    }
+        SimpleCamera camera = new SimpleCamera();
 
-    /// <summary>
-    /// 指定テクスチャを開き直します。
-    /// </summary>
-    /// <param name="tex">テクスチャ</param>
-    public void OpenTexture(TSOTex tex)
-    {
-        tex.Open(device);
-    }
-
-    SimpleCamera camera = new SimpleCamera();
-
-    /// <summary>
-    /// カメラ
-    /// </summary>
-    public SimpleCamera Camera
-    {
-        get {
-            return camera;
-        }
-        set {
-            camera = value;
-        }
-    }
-
-    /// <summary>
-    /// world行列
-    /// </summary>
-    protected Matrix world_matrix = Matrix.Identity;
-    /// <summary>
-    /// view変換行列
-    /// </summary>
-    protected Matrix Transform_View = Matrix.Identity;
-    /// <summary>
-    /// projection変換行列
-    /// </summary>
-    protected Matrix Transform_Projection = Matrix.Identity;
-
-    Matrix world_view_projection_matrix = Matrix.Identity;
-
-    TechniqueMap techmap = new TechniqueMap();
-    TSOConfig tso_config;
-
-    /// <summary>
-    /// deviceを作成します。
-    /// </summary>
-    /// <param name="control">レンダリング先となるcontrol</param>
-    /// <param name="tso_config">設定</param>
-    /// <returns>deviceの作成に成功したか</returns>
-    public bool InitializeApplication(Control control, TSOConfig tso_config)
-    {
-        this.tso_config = tso_config;
-        SetControl(control);
-
-        control.MouseDown += new MouseEventHandler(form_OnMouseDown);
-        control.MouseMove += new MouseEventHandler(form_OnMouseMove);
-
+        /// <summary>
+        /// カメラ
+        /// </summary>
+        public SimpleCamera Camera
         {
-            device = new Device(DriverType.Hardware, DeviceCreationFlags.None);
+            get
+            {
+                return camera;
+            }
+            set
+            {
+                camera = value;
+            }
+        }
+
+        /// <summary>
+        /// world行列
+        /// </summary>
+        protected Matrix world_matrix = Matrix.Identity;
+        /// <summary>
+        /// view変換行列
+        /// </summary>
+        protected Matrix Transform_View = Matrix.Identity;
+        /// <summary>
+        /// projection変換行列
+        /// </summary>
+        protected Matrix Transform_Projection = Matrix.Identity;
+
+        Matrix world_view_projection_matrix = Matrix.Identity;
+
+        TechniqueMap techmap = new TechniqueMap();
+        TSOConfig tso_config;
+
+        /// <summary>
+        /// deviceを作成します。
+        /// </summary>
+        /// <param name="control">レンダリング先となるcontrol</param>
+        /// <param name="tso_config">設定</param>
+        /// <returns>deviceの作成に成功したか</returns>
+        public bool InitializeApplication(Control control, TSOConfig tso_config)
+        {
+            this.tso_config = tso_config;
+            SetControl(control);
+
+            control.MouseDown += new MouseEventHandler(form_OnMouseDown);
+            control.MouseMove += new MouseEventHandler(form_OnMouseMove);
 
             var desc = new SharpDX.DXGI.SwapChainDescription()
             {
@@ -286,589 +284,587 @@ public class Viewer : IDisposable
                 OutputHandle = control.Handle,
                 IsWindowed = true,
                 ModeDescription = new SharpDX.DXGI.ModeDescription(0, 0, new SharpDX.DXGI.Rational(60, 1), SharpDX.DXGI.Format.R8G8B8A8_UNorm),
-                SampleDescription = DetectSampleDescription(device, SharpDX.DXGI.Format.D32_Float),
+                SampleDescription = new SharpDX.DXGI.SampleDescription(4, 0),
                 Flags = SharpDX.DXGI.SwapChainFlags.AllowModeSwitch,
                 SwapEffect = SharpDX.DXGI.SwapEffect.Discard
             };
-            dxgi_factory = new SharpDX.DXGI.Factory();
-            swap_chain = new SharpDX.DXGI.SwapChain(dxgi_factory, device, desc);
-        }
+            Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.None, desc, out device, out swap_chain);
 
-        ctx = device.ImmediateContext;
+            //DetectSampleDescription(device, SharpDX.DXGI.Format.D32_Float);
 
-        Stopwatch sw = new Stopwatch();
-        sw.Start();
+            ctx = device.ImmediateContext;
 
-        string effect_file = Path.Combine(Application.StartupPath, @"toonshader.fx.bin");
-        if (! File.Exists(effect_file))
-        {
-            Console.WriteLine("File not found: " + effect_file);
-            return false;
-        }
-        try
-        {
-            var shader_bytecode = ShaderBytecode.FromFile(effect_file);
-            effect = new Effect(device, shader_bytecode);
-        }
-        catch (SharpDX.CompilationException e)
-        {
-            Console.WriteLine(e.Message + ": " + effect_file);
-            return false;
-        }
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
-        sw.Stop();
-        Console.WriteLine("toonshader.fx.bin read time: " + sw.Elapsed);
-
-        string techmap_file = Path.Combine(Application.StartupPath, @"techmap.txt");
-        if (! File.Exists(techmap_file))
-        {
-            Console.WriteLine("File not found: " + techmap_file);
-            return false;
-        }
-        techmap.Load(techmap_file);
-
-        World_variable = effect.GetVariableBySemantic("World").AsMatrix();
-        WorldView_variable = effect.GetVariableBySemantic("WorldView").AsMatrix();
-        WorldViewProjection_variable = effect.GetVariableBySemantic("WorldViewProjection").AsMatrix();
-        /* for HUD */
-        Projection_variable = effect.GetVariableBySemantic("Projection").AsMatrix();
-
-        LocalBoneMats_variable = effect.GetVariableByName("LocalBoneMats").AsMatrix();
-        LightDirForced_variable = effect.GetVariableByName("LightDirForced").AsVector();
-        UVSCR_variable = effect.GetVariableByName("UVSCR").AsVector();
-
-        cb_variable = effect.GetConstantBufferByName("cb");
-
-        ShadeTex_texture_variable = effect.GetVariableByName("ShadeTex_texture").AsShaderResource();
-        ColorTex_texture_variable = effect.GetVariableByName("ColorTex_texture").AsShaderResource();
-
-        figures.Camera = camera;
-        figures.TSOFileOpen += delegate(TSOFile tso)
-        {
-            tso.Open(device, effect);
-            techmap.AssignTechniqueIndices(tso);
-        };
-
-        // Define an input layout to be passed to the vertex shader.
-        var technique = effect.GetTechniqueByIndex(0);
-        il = new InputLayout(device, technique.GetPassByIndex(0).Description.Signature, TSOSubMesh.ie);
-
-        // Setup the immediate context to use the shaders and model we defined.
-        ctx.InputAssembler.InputLayout = il;
-
-        camera.Update();
-
-        DefineBlendState();
-        DefineDepthStencilState();
-        DefineRasterizerState();
-
-        return true;
-    }
-
-    BlendState default_blend_state;
-
-    void DefineBlendState()
-    {
-        var desc = BlendStateDescription.Default();
-        desc.RenderTarget[0].IsBlendEnabled = true;
-
-        desc.RenderTarget[0].SourceBlend = BlendOption.SourceAlpha;
-        desc.RenderTarget[0].DestinationBlend = BlendOption.InverseSourceAlpha;
-        desc.RenderTarget[0].BlendOperation = BlendOperation.Add;
-
-        /*
-        desc.RenderTarget[0].SourceAlphaBlend = BlendOption.One;
-        desc.RenderTarget[0].DestinationAlphaBlend = BlendOption.Zero;
-        desc.RenderTarget[0].AlphaBlendOperation = BlendOperation.Add;
-        */
-
-        default_blend_state = new BlendState(device, desc);
-    }
-
-    DepthStencilState default_depth_stencil_state;
-
-    // Define how the depth buffer will be used to filter out objects, based on their distance from the viewer.
-    void DefineDepthStencilState()
-    {
-        var desc = DepthStencilStateDescription.Default();
-
-        // NoDepthWriteState
-        /*
-        desc.IsDepthEnabled = true;
-        desc.DepthWriteMask = DepthWriteMask.Zero;
-        */
-        desc.DepthComparison = Comparison.LessEqual;
-
-        default_depth_stencil_state = new DepthStencilState(device, desc);
-    }
-
-    RasterizerState default_rasterizer_state;
-
-    void DefineRasterizerState()
-    {
-        var desc = RasterizerStateDescription.Default();
-
-        desc.IsFrontCounterClockwise = true;
-
-        default_rasterizer_state = new RasterizerState(device, desc);
-    }
-
-    static SharpDX.DXGI.SampleDescription DetectSampleDescription(Device device, SharpDX.DXGI.Format format)
-    {
-        var desc = new SharpDX.DXGI.SampleDescription();
-        for (int multisample_count = Device.MultisampleCountMaximum; multisample_count > 0; --multisample_count)
-        {
-            int quality_levels = device.CheckMultisampleQualityLevels(format, multisample_count);
-            if (quality_levels > 0)
+            string effect_file = Path.Combine(Application.StartupPath, @"toonshader.fx.bin");
+            if (!File.Exists(effect_file))
             {
-                desc.Count = multisample_count;
-                desc.Quality = quality_levels - 1;
-                break;
+                Console.WriteLine("File not found: " + effect_file);
+                return false;
+            }
+            try
+            {
+                var shader_bytecode = ShaderBytecode.FromFile(effect_file);
+                effect = new Effect(device, shader_bytecode);
+            }
+            catch (SharpDX.CompilationException e)
+            {
+                Console.WriteLine(e.Message + ": " + effect_file);
+                return false;
+            }
+
+            sw.Stop();
+            Console.WriteLine("toonshader.fx.bin read time: " + sw.Elapsed);
+
+            string techmap_file = Path.Combine(Application.StartupPath, @"techmap.txt");
+            if (!File.Exists(techmap_file))
+            {
+                Console.WriteLine("File not found: " + techmap_file);
+                return false;
+            }
+            techmap.Load(techmap_file);
+
+            World_variable = effect.GetVariableBySemantic("World").AsMatrix();
+            WorldView_variable = effect.GetVariableBySemantic("WorldView").AsMatrix();
+            WorldViewProjection_variable = effect.GetVariableBySemantic("WorldViewProjection").AsMatrix();
+            /* for HUD */
+            Projection_variable = effect.GetVariableBySemantic("Projection").AsMatrix();
+
+            LocalBoneMats_variable = effect.GetVariableByName("LocalBoneMats").AsMatrix();
+            LightDirForced_variable = effect.GetVariableByName("LightDirForced").AsVector();
+            UVSCR_variable = effect.GetVariableByName("UVSCR").AsVector();
+
+            cb_variable = effect.GetConstantBufferByName("cb");
+
+            ShadeTex_texture_variable = effect.GetVariableByName("ShadeTex_texture").AsShaderResource();
+            ColorTex_texture_variable = effect.GetVariableByName("ColorTex_texture").AsShaderResource();
+
+            figures.Camera = camera;
+            figures.TSOFileOpen += delegate (TSOFile tso)
+            {
+                tso.Open(device, effect);
+                techmap.AssignTechniqueIndices(tso);
+            };
+
+            // Define an input layout to be passed to the vertex shader.
+            var technique = effect.GetTechniqueByIndex(0);
+            il = new InputLayout(device, technique.GetPassByIndex(0).Description.Signature, TSOSubMesh.ie);
+
+            // Setup the immediate context to use the shaders and model we defined.
+            ctx.InputAssembler.InputLayout = il;
+
+            camera.Update();
+
+            DefineBlendState();
+            DefineDepthStencilState();
+            DefineRasterizerState();
+
+            return true;
+        }
+
+        BlendState default_blend_state;
+
+        void DefineBlendState()
+        {
+            var desc = BlendStateDescription.Default();
+            desc.RenderTarget[0].IsBlendEnabled = true;
+
+            desc.RenderTarget[0].SourceBlend = BlendOption.SourceAlpha;
+            desc.RenderTarget[0].DestinationBlend = BlendOption.InverseSourceAlpha;
+            desc.RenderTarget[0].BlendOperation = BlendOperation.Add;
+
+            /*
+            desc.RenderTarget[0].SourceAlphaBlend = BlendOption.One;
+            desc.RenderTarget[0].DestinationAlphaBlend = BlendOption.Zero;
+            desc.RenderTarget[0].AlphaBlendOperation = BlendOperation.Add;
+            */
+
+            default_blend_state = new BlendState(device, desc);
+        }
+
+        DepthStencilState default_depth_stencil_state;
+
+        // Define how the depth buffer will be used to filter out objects, based on their distance from the viewer.
+        void DefineDepthStencilState()
+        {
+            var desc = DepthStencilStateDescription.Default();
+
+            // NoDepthWriteState
+            /*
+            desc.IsDepthEnabled = true;
+            desc.DepthWriteMask = DepthWriteMask.Zero;
+            */
+            desc.DepthComparison = Comparison.LessEqual;
+
+            default_depth_stencil_state = new DepthStencilState(device, desc);
+        }
+
+        RasterizerState default_rasterizer_state;
+
+        void DefineRasterizerState()
+        {
+            var desc = RasterizerStateDescription.Default();
+
+            desc.IsFrontCounterClockwise = true;
+
+            default_rasterizer_state = new RasterizerState(device, desc);
+        }
+
+        static SharpDX.DXGI.SampleDescription DetectSampleDescription(Device device, SharpDX.DXGI.Format format)
+        {
+            var desc = new SharpDX.DXGI.SampleDescription();
+            for (int multisample_count = Device.MultisampleCountMaximum; multisample_count > 0; --multisample_count)
+            {
+                int quality_levels = device.CheckMultisampleQualityLevels(format, multisample_count);
+                if (quality_levels > 0)
+                {
+                    desc.Count = multisample_count;
+                    desc.Quality = quality_levels - 1;
+                    break;
+                }
+            }
+            Console.WriteLine("sample count {0} quality {1}", desc.Count, desc.Quality);
+            return desc;
+        }
+
+        public void OnUserResized()
+        {
+            Console.WriteLine("OnUserResized client size {0}x{1}", control.ClientSize.Width, control.ClientSize.Height);
+
+            if (ztex_view != null)
+                ztex_view.Dispose();
+            if (ztex != null)
+                ztex.Dispose();
+
+            if (buf0_view != null)
+                buf0_view.Dispose();
+            if (buf0 != null)
+                buf0.Dispose();
+
+            // Resize the backbuffer
+            swap_chain.ResizeBuffers(1 /* desc.BufferCount */, control.ClientSize.Width, control.ClientSize.Height, SharpDX.DXGI.Format.Unknown, SharpDX.DXGI.SwapChainFlags.None);
+
+            // Retrieve the back buffer of the swap chain.
+            buf0 = Texture2D.FromSwapChain<Texture2D>(swap_chain, 0);
+            buf0_view = new RenderTargetView(device, buf0);
+
+            // Create the depth buffer
+            ztex = new Texture2D(device, new Texture2DDescription()
+            {
+                Format = SharpDX.DXGI.Format.D32_Float,
+                ArraySize = 1,
+                MipLevels = 1,
+                Width = control.ClientSize.Width,
+                Height = control.ClientSize.Height,
+                SampleDescription = swap_chain.Description.SampleDescription,
+                Usage = ResourceUsage.Default,
+                BindFlags = BindFlags.DepthStencil,
+            });
+
+            // Create the depth buffer view
+            ztex_view = new DepthStencilView(device, ztex);
+
+            ctx.OutputMerger.SetTargets(ztex_view, buf0_view);
+
+            // Setup targets and viewport for rendering
+            viewport = new Viewport(0, 0, control.ClientSize.Width, control.ClientSize.Height, 0.0f, 1.0f);
+            ctx.Rasterizer.SetViewport(viewport);
+
+            // Setup new projection matrix with correct aspect ratio
+            Transform_Projection = Matrix.PerspectiveFovRH(
+                    MathUtil.DegreesToRadians(tso_config.Fov),
+                    (float)viewport.Width / (float)viewport.Height,
+                    tso_config.Znear,
+                    tso_config.Zfar);
+        }
+
+        bool motion_enabled = false;
+
+        long start_ticks = 0;
+        int start_frame_index = 0;
+        long wait = (long)(10000000.0f / 60.0f);
+        int frame_index = 0;
+
+        /// <summary>
+        /// モーションの有無
+        /// </summary>
+        public bool MotionEnabled
+        {
+            get
+            {
+                return motion_enabled;
+            }
+            set
+            {
+                motion_enabled = value;
+
+                if (motion_enabled)
+                {
+                    start_ticks = DateTime.Now.Ticks;
+                    start_frame_index = frame_index;
+                }
             }
         }
-        Console.WriteLine("sample count {0} quality {1}", desc.Count, desc.Quality);
-        return desc;
-    }
 
-    public void OnUserResized()
-    {
-        Console.WriteLine("OnUserResized client size {0}x{1}", control.ClientSize.Width, control.ClientSize.Height);
-
-        if (ztex_view != null)
-            ztex_view.Dispose();
-        if (ztex != null)
-            ztex.Dispose();
-
-        if (buf0_view != null)
-            buf0_view.Dispose();
-        if (buf0 != null)
-            buf0.Dispose();
-
-        // Resize the backbuffer
-        swap_chain.ResizeBuffers(1 /* desc.BufferCount */, control.ClientSize.Width, control.ClientSize.Height, SharpDX.DXGI.Format.Unknown, SharpDX.DXGI.SwapChainFlags.None);
-
-        // Retrieve the back buffer of the swap chain.
-        buf0 = Texture2D.FromSwapChain<Texture2D>(swap_chain, 0);
-        buf0_view = new RenderTargetView(device, buf0);
-
-        // Create the depth buffer
-        ztex = new Texture2D(device, new Texture2DDescription()
+        /// <summary>
+        /// 次のシーンフレームに進みます。
+        /// </summary>
+        public void FrameMove()
         {
-            Format = SharpDX.DXGI.Format.D32_Float,
-            ArraySize = 1,
-            MipLevels = 1,
-            Width = control.ClientSize.Width,
-            Height = control.ClientSize.Height,
-            SampleDescription = swap_chain.Description.SampleDescription,
-            Usage = ResourceUsage.Default,
-            BindFlags = BindFlags.DepthStencil,
-        });
-
-        // Create the depth buffer view
-        ztex_view = new DepthStencilView(device, ztex);
-
-        ctx.OutputMerger.SetTargets(ztex_view, buf0_view);
-
-        // Setup targets and viewport for rendering
-        viewport = new Viewport(0, 0, control.ClientSize.Width, control.ClientSize.Height, 0.0f, 1.0f);
-        ctx.Rasterizer.SetViewport(viewport);
-
-        // Setup new projection matrix with correct aspect ratio
-        Transform_Projection = Matrix.PerspectiveFovRH(
-                MathUtil.DegreesToRadians(tso_config.Fov),
-                (float)viewport.Width / (float)viewport.Height,
-                tso_config.Znear,
-                tso_config.Zfar );
-    }
-
-    bool motion_enabled = false;
-
-    long start_ticks = 0;
-    int start_frame_index = 0;
-    long wait = (long)(10000000.0f / 60.0f);
-    int frame_index = 0;
-
-    /// <summary>
-    /// モーションの有無
-    /// </summary>
-    public bool MotionEnabled
-    {
-        get
-        {
-            return motion_enabled;
-        }
-        set
-        {
-            motion_enabled = value;
-
+            if (camera.NeedUpdate)
+            {
+                camera.Update();
+                Transform_View = camera.ViewMatrix;
+            }
             if (motion_enabled)
             {
-                start_ticks = DateTime.Now.Ticks;
-                start_frame_index = frame_index;
-            }
-        }
-    }
-
-    /// <summary>
-    /// 次のシーンフレームに進みます。
-    /// </summary>
-    public void FrameMove()
-    {
-        if (camera.NeedUpdate)
-        {
-            camera.Update();
-            Transform_View = camera.ViewMatrix;
-        }
-        if (motion_enabled)
-        {
-            int frame_len = figures.GetMaxFrameLength();
-            if (frame_len > 0)
-            {
-                long dt = DateTime.Now.Ticks - start_ticks;
-                int new_frame_index = (int)((start_frame_index + dt / wait) % frame_len);
-                Debug.Assert(new_frame_index >= 0);
-                Debug.Assert(new_frame_index < frame_len);
-                frame_index = new_frame_index;
-            }
-            figures.SetFrameIndex(frame_index);
-            figures.UpdateBoneMatrices(true);
-        }
-    }
-
-    /// <summary>
-    /// レンダリングするのに用いるデリゲート型
-    /// </summary>
-    public delegate void RenderingHandler();
-
-    /// <summary>
-    /// レンダリングするハンドラ
-    /// </summary>
-    public RenderingHandler Rendering;
-
-    /// <summary>
-    /// シーンをレンダリングします。
-    /// </summary>
-    public void Render()
-    {
-        ctx.ClearDepthStencilView(ztex_view, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
-        ctx.ClearRenderTargetView(buf0_view, ScreenColor);
-
-        UpdateTransform();
-        UVSCR_variable.Set(UVSCR());
-
-        DrawFigure();
-
-        if (Rendering != null)
-            Rendering();
-
-        swap_chain.Present(0, SharpDX.DXGI.PresentFlags.None);
-    }
-
-    void UpdateTransform()
-    {
-        Matrix world_view_matrix = world_matrix * Transform_View;
-        world_view_projection_matrix = world_view_matrix * Transform_Projection;
-
-        World_variable.SetMatrix(world_matrix);
-        WorldView_variable.SetMatrix(world_view_matrix);
-        WorldViewProjection_variable.SetMatrix(world_view_projection_matrix);
-        /* for HUD */
-        Projection_variable.SetMatrix(Transform_Projection);
-    }
-
-    /// スクリーン塗りつぶし色
-    public SharpDX.Color ScreenColor { get; set; }
-
-    /// <summary>
-    /// UVSCR値を得ます。
-    /// </summary>
-    /// <returns></returns>
-    public Vector4 UVSCR()
-    {
-        float x = Environment.TickCount * 0.000002f;
-        return new Vector4(x, 0.0f, 0.0f, 0.0f);
-    }
-
-    /// <summary>
-    /// フィギュアを描画します。
-    /// </summary>
-    protected virtual void DrawFigure()
-    {
-        foreach (Figure fig in figures.FigureList)
-        {
-            DrawFigure(fig);
-        }
-    }
-
-    void DrawFigure(Figure fig)
-    {
-        LightDirForced_variable.Set(fig.LightDirForced());
-        foreach (TSOFile tso in fig.TSOFileList)
-        {
-            int current_spec = -1;
-
-            foreach (TSOMesh mesh in tso.meshes)
-                foreach (TSOSubMesh sub_mesh in mesh.sub_meshes)
+                int frame_len = figures.GetMaxFrameLength();
+                if (frame_len > 0)
                 {
-                    TSOSubScript scr = tso.sub_scripts[sub_mesh.spec];
-
-                    if (sub_mesh.spec != current_spec)
-                    {
-                        current_spec = sub_mesh.spec;
-
-                        cb_variable.SetConstantBuffer(scr.cb);
-
-                        TSOTex shadeTex;
-                        if (tso.texmap.TryGetValue(scr.shader.ShadeTexName, out shadeTex))
-                            ShadeTex_texture_variable.SetResource(shadeTex.d3d_tex_view);
-
-                        TSOTex colorTex;
-                        if (tso.texmap.TryGetValue(scr.shader.ColorTexName, out colorTex))
-                            ColorTex_texture_variable.SetResource(colorTex.d3d_tex_view);
-                    }
-
-                    int technique_idx = scr.shader.technique_idx;
-
-                    var technique = effect.GetTechniqueByIndex(technique_idx);
-                    if (!technique.IsValid)
-                    {
-                        string technique_name = scr.shader.technique_name;
-                        Console.WriteLine("technique {0} is not valid", technique_name);
-                        continue;
-                    }
-
-                    LocalBoneMats_variable.SetMatrix(fig.ClipBoneMatrices(sub_mesh));
-
-                    if (!technique.GetPassByIndex(0).IsValid)
-                    {
-                        Console.WriteLine("pass #0 is not valid");
-                        continue;
-                    }
-
-                    ctx.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleStrip;
-                    ctx.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(sub_mesh.vb, 52, 0));
-
-                    for (int i = 0; i < technique.Description.PassCount; i++)
-                    {
-                        ctx.OutputMerger.SetBlendState(default_blend_state);
-                        ctx.OutputMerger.SetDepthStencilState(default_depth_stencil_state);
-                        ctx.Rasterizer.State = default_rasterizer_state;
-
-                        technique.GetPassByIndex(i).Apply(ctx);
-                        ctx.Draw(sub_mesh.vertices.Length, 0);
-                    }
+                    long dt = DateTime.Now.Ticks - start_ticks;
+                    int new_frame_index = (int)((start_frame_index + dt / wait) % frame_len);
+                    Debug.Assert(new_frame_index >= 0);
+                    Debug.Assert(new_frame_index < frame_len);
+                    frame_index = new_frame_index;
                 }
+                figures.SetFrameIndex(frame_index);
+                figures.UpdateBoneMatrices(true);
+            }
         }
-    }
 
-    /// <summary>
-    /// 内部objectを破棄します。
-    /// </summary>
-    public void Dispose()
-    {
-        figures.Dispose();
+        /// <summary>
+        /// レンダリングするのに用いるデリゲート型
+        /// </summary>
+        public delegate void RenderingHandler();
 
-        if (ctx != null)
+        /// <summary>
+        /// レンダリングするハンドラ
+        /// </summary>
+        public RenderingHandler Rendering;
+
+        /// <summary>
+        /// シーンをレンダリングします。
+        /// </summary>
+        public void Render()
         {
-            ctx.ClearState();
-            ctx.Flush();
-            ctx.Dispose();
+            ctx.ClearDepthStencilView(ztex_view, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
+            ctx.ClearRenderTargetView(buf0_view, ScreenColor);
+
+            UpdateTransform();
+            UVSCR_variable.Set(UVSCR());
+
+            DrawFigure();
+
+            if (Rendering != null)
+                Rendering();
+
+            swap_chain.Present(1, SharpDX.DXGI.PresentFlags.None);
         }
 
-        default_rasterizer_state.Dispose();
-        default_depth_stencil_state.Dispose();
-        default_blend_state.Dispose();
-
-        if (ztex_view != null)
-            ztex_view.Dispose();
-        if (ztex != null)
-            ztex.Dispose();
-
-        if (buf0_view != null)
-            buf0_view.Dispose();
-        if (buf0 != null)
-            buf0.Dispose();
-
-        if (swap_chain != null)
-            swap_chain.Dispose();
-        if (dxgi_factory != null)
-            dxgi_factory.Dispose();
-
-        if (il != null)
-            il.Dispose();
-        if (effect != null)
-            effect.Dispose();
-        if (device != null)
-            device.Dispose();
-    }
-
-    /// <summary>
-    /// バックバッファをBMP形式でファイルに保存します。
-    /// </summary>
-    /// <param name="file">ファイル名</param>
-    public void SaveToBitmap(string file)
-    {
-        /*
-        using (Surface sf = device.GetBackBuffer(0, 0))
-            if (sf != null)
-                Surface.ToFile(sf, file, ImageFileFormat.Bmp);
-        */
-    }
-
-    /// <summary>
-    /// バックバッファをPNG形式でファイルに保存します。
-    /// </summary>
-    /// <param name="file">ファイル名</param>
-    public void SaveToPng(string file)
-    {
-        /*
-        using (Surface sf = device.GetBackBuffer(0, 0))
-            if (sf != null)
-                Surface.ToFile(sf, file, ImageFileFormat.Png);
-        */
-    }
-
-    /// <summary>
-    /// 指定スクリーン座標に指定ボーンがあるか。
-    /// </summary>
-    /// <param name="x">スクリーンX座標</param>
-    /// <param name="y">スクリーンY座標</param>
-    /// <param name="bone">ボーン</param>
-    /// <returns>ボーンを見つけたか</returns>
-    public bool FindBoneOnScreenPoint(float x, float y, TMONode bone)
-    {
-        float collisionTime;
-        Vector3 collisionPoint;
-
-        return FindBoneOnScreenPoint(x, y, bone, out collisionPoint, out collisionTime);
-    }
-
-    /// <summary>
-    /// 指定スクリーン座標に指定ボーンがあるか。
-    /// </summary>
-    /// <param name="x">スクリーンX座標</param>
-    /// <param name="y">スクリーンY座標</param>
-    /// <param name="bone">ボーン</param>
-    /// <param name="collisionPoint"></param>
-    /// <param name="collisionTime"></param>
-    /// <returns>ボーンを見つけたか</returns>
-    public bool FindBoneOnScreenPoint(float x, float y, TMONode bone, out Vector3 collisionPoint, out float collisionTime)
-    {
-        collisionTime = 0.0f;
-        collisionPoint = Vector3.Zero;
-
-        Figure fig;
-        if (figures.TryGetFigure(out fig))
+        void UpdateTransform()
         {
-            Matrix m = bone.combined_matrix;
+            Matrix world_view_matrix = world_matrix * Transform_View;
+            world_view_projection_matrix = world_view_matrix * Transform_Projection;
 
-            float sphereRadius = 1.25f;
-            Vector3 sphereCenter = new Vector3(m.M41, m.M42, m.M43);
-            Vector3 rayStart = ScreenToLocal(x, y, 0.0f);
-            Vector3 rayEnd = ScreenToLocal(x, y, 1.0f);
-            Vector3 rayOrientation = rayEnd - rayStart;
-
-            return DetectSphereRayCollision(sphereRadius, ref sphereCenter, ref rayStart, ref rayOrientation, out collisionPoint, out collisionTime);
+            World_variable.SetMatrix(world_matrix);
+            WorldView_variable.SetMatrix(world_view_matrix);
+            WorldViewProjection_variable.SetMatrix(world_view_projection_matrix);
+            /* for HUD */
+            Projection_variable.SetMatrix(Transform_Projection);
         }
-        return false;
-    }
 
-    /// <summary>
-    /// 球とレイの衝突を見つけます。
-    /// </summary>
-    /// <param name="sphereRadius">球の半径</param>
-    /// <param name="sphereCenter">球の中心位置</param>
-    /// <param name="rayStart">光線の発射位置</param>
-    /// <param name="rayOrientation">光線の方向</param>
-    /// <param name="collisionPoint">衝突位置</param>
-    /// <param name="collisionTime">衝突時刻</param>
-    /// <returns>衝突したか</returns>
-    public static bool DetectSphereRayCollision(float sphereRadius, ref Vector3 sphereCenter, ref Vector3 rayStart, ref Vector3 rayOrientation, out Vector3 collisionPoint, out float collisionTime)
-    {
-        collisionTime = 0.0f;
-        collisionPoint = Vector3.Zero;
+        /// スクリーン塗りつぶし色
+        public SharpDX.Color ScreenColor { get; set; }
 
-        Vector3 u = rayStart - sphereCenter;
-        float a = Vector3.Dot(rayOrientation, rayOrientation);
-        float b = Vector3.Dot(rayOrientation, u);
-        float c = Vector3.Dot(u, u) - sphereRadius * sphereRadius;
-        if (a <= float.Epsilon)
-            //誤差
+        /// <summary>
+        /// UVSCR値を得ます。
+        /// </summary>
+        /// <returns></returns>
+        public Vector4 UVSCR()
+        {
+            float x = Environment.TickCount * 0.000002f;
+            return new Vector4(x, 0.0f, 0.0f, 0.0f);
+        }
+
+        /// <summary>
+        /// フィギュアを描画します。
+        /// </summary>
+        protected virtual void DrawFigure()
+        {
+            foreach (Figure fig in figures.FigureList)
+            {
+                DrawFigure(fig);
+            }
+        }
+
+        void DrawFigure(Figure fig)
+        {
+            LightDirForced_variable.Set(fig.LightDirForced());
+            foreach (TSOFile tso in fig.TSOFileList)
+            {
+                int current_spec = -1;
+
+                foreach (TSOMesh mesh in tso.meshes)
+                    foreach (TSOSubMesh sub_mesh in mesh.sub_meshes)
+                    {
+                        TSOSubScript scr = tso.sub_scripts[sub_mesh.spec];
+
+                        if (sub_mesh.spec != current_spec)
+                        {
+                            current_spec = sub_mesh.spec;
+
+                            cb_variable.SetConstantBuffer(scr.cb);
+
+                            TSOTex shadeTex;
+                            if (tso.texmap.TryGetValue(scr.shader.ShadeTexName, out shadeTex))
+                                ShadeTex_texture_variable.SetResource(shadeTex.d3d_tex_view);
+
+                            TSOTex colorTex;
+                            if (tso.texmap.TryGetValue(scr.shader.ColorTexName, out colorTex))
+                                ColorTex_texture_variable.SetResource(colorTex.d3d_tex_view);
+                        }
+
+                        int technique_idx = scr.shader.technique_idx;
+
+                        var technique = effect.GetTechniqueByIndex(technique_idx);
+                        if (!technique.IsValid)
+                        {
+                            string technique_name = scr.shader.technique_name;
+                            Console.WriteLine("technique {0} is not valid", technique_name);
+                            continue;
+                        }
+
+                        LocalBoneMats_variable.SetMatrix(fig.ClipBoneMatrices(sub_mesh));
+
+                        if (!technique.GetPassByIndex(0).IsValid)
+                        {
+                            Console.WriteLine("pass #0 is not valid");
+                            continue;
+                        }
+
+                        ctx.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleStrip;
+                        ctx.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(sub_mesh.vb, 52, 0));
+
+                        for (int i = 0; i < technique.Description.PassCount; i++)
+                        {
+                            ctx.OutputMerger.SetBlendState(default_blend_state);
+                            ctx.OutputMerger.SetDepthStencilState(default_depth_stencil_state);
+                            ctx.Rasterizer.State = default_rasterizer_state;
+
+                            technique.GetPassByIndex(i).Apply(ctx);
+                            ctx.Draw(sub_mesh.vertices.Length, 0);
+                        }
+                    }
+            }
+        }
+
+        /// <summary>
+        /// 内部objectを破棄します。
+        /// </summary>
+        public void Dispose()
+        {
+            figures.Dispose();
+
+            if (ctx != null)
+            {
+                ctx.ClearState();
+                ctx.Flush();
+                ctx.Dispose();
+            }
+
+            default_rasterizer_state.Dispose();
+            default_depth_stencil_state.Dispose();
+            default_blend_state.Dispose();
+
+            if (ztex_view != null)
+                ztex_view.Dispose();
+            if (ztex != null)
+                ztex.Dispose();
+
+            if (buf0_view != null)
+                buf0_view.Dispose();
+            if (buf0 != null)
+                buf0.Dispose();
+
+            if (swap_chain != null)
+                swap_chain.Dispose();
+
+            if (il != null)
+                il.Dispose();
+            if (effect != null)
+                effect.Dispose();
+            if (device != null)
+                device.Dispose();
+        }
+
+        /// <summary>
+        /// バックバッファをBMP形式でファイルに保存します。
+        /// </summary>
+        /// <param name="file">ファイル名</param>
+        public void SaveToBitmap(string file)
+        {
+            /*
+            using (Surface sf = device.GetBackBuffer(0, 0))
+                if (sf != null)
+                    Surface.ToFile(sf, file, ImageFileFormat.Bmp);
+            */
+        }
+
+        /// <summary>
+        /// バックバッファをPNG形式でファイルに保存します。
+        /// </summary>
+        /// <param name="file">ファイル名</param>
+        public void SaveToPng(string file)
+        {
+            /*
+            using (Surface sf = device.GetBackBuffer(0, 0))
+                if (sf != null)
+                    Surface.ToFile(sf, file, ImageFileFormat.Png);
+            */
+        }
+
+        /// <summary>
+        /// 指定スクリーン座標に指定ボーンがあるか。
+        /// </summary>
+        /// <param name="x">スクリーンX座標</param>
+        /// <param name="y">スクリーンY座標</param>
+        /// <param name="bone">ボーン</param>
+        /// <returns>ボーンを見つけたか</returns>
+        public bool FindBoneOnScreenPoint(float x, float y, TMONode bone)
+        {
+            float collisionTime;
+            Vector3 collisionPoint;
+
+            return FindBoneOnScreenPoint(x, y, bone, out collisionPoint, out collisionTime);
+        }
+
+        /// <summary>
+        /// 指定スクリーン座標に指定ボーンがあるか。
+        /// </summary>
+        /// <param name="x">スクリーンX座標</param>
+        /// <param name="y">スクリーンY座標</param>
+        /// <param name="bone">ボーン</param>
+        /// <param name="collisionPoint"></param>
+        /// <param name="collisionTime"></param>
+        /// <returns>ボーンを見つけたか</returns>
+        public bool FindBoneOnScreenPoint(float x, float y, TMONode bone, out Vector3 collisionPoint, out float collisionTime)
+        {
+            collisionTime = 0.0f;
+            collisionPoint = Vector3.Zero;
+
+            Figure fig;
+            if (figures.TryGetFigure(out fig))
+            {
+                Matrix m = bone.combined_matrix;
+
+                float sphereRadius = 1.25f;
+                Vector3 sphereCenter = new Vector3(m.M41, m.M42, m.M43);
+                Vector3 rayStart = ScreenToLocal(x, y, 0.0f);
+                Vector3 rayEnd = ScreenToLocal(x, y, 1.0f);
+                Vector3 rayOrientation = rayEnd - rayStart;
+
+                return DetectSphereRayCollision(sphereRadius, ref sphereCenter, ref rayStart, ref rayOrientation, out collisionPoint, out collisionTime);
+            }
             return false;
-        float d = b * b - a * c;
-        if (d < 0.0f)
-            //衝突しない
-            return false;
-        collisionTime = (-b - (float)Math.Sqrt(d)) / a;
-        collisionPoint = rayStart + rayOrientation * collisionTime;
-        return true;
+        }
+
+        /// <summary>
+        /// 球とレイの衝突を見つけます。
+        /// </summary>
+        /// <param name="sphereRadius">球の半径</param>
+        /// <param name="sphereCenter">球の中心位置</param>
+        /// <param name="rayStart">光線の発射位置</param>
+        /// <param name="rayOrientation">光線の方向</param>
+        /// <param name="collisionPoint">衝突位置</param>
+        /// <param name="collisionTime">衝突時刻</param>
+        /// <returns>衝突したか</returns>
+        public static bool DetectSphereRayCollision(float sphereRadius, ref Vector3 sphereCenter, ref Vector3 rayStart, ref Vector3 rayOrientation, out Vector3 collisionPoint, out float collisionTime)
+        {
+            collisionTime = 0.0f;
+            collisionPoint = Vector3.Zero;
+
+            Vector3 u = rayStart - sphereCenter;
+            float a = Vector3.Dot(rayOrientation, rayOrientation);
+            float b = Vector3.Dot(rayOrientation, u);
+            float c = Vector3.Dot(u, u) - sphereRadius * sphereRadius;
+            if (a <= float.Epsilon)
+                //誤差
+                return false;
+            float d = b * b - a * c;
+            if (d < 0.0f)
+                //衝突しない
+                return false;
+            collisionTime = (-b - (float)Math.Sqrt(d)) / a;
+            collisionPoint = rayStart + rayOrientation * collisionTime;
+            return true;
+        }
+
+        /// <summary>
+        /// viewport行列を作成します。
+        /// </summary>
+        /// <param name="viewport">viewport</param>
+        /// <returns>viewport行列</returns>
+        public static Matrix CreateViewportMatrix(Viewport viewport)
+        {
+            Matrix m = Matrix.Identity;
+            m.M11 = (float)viewport.Width / 2;
+            m.M22 = -1.0f * (float)viewport.Height / 2;
+            m.M33 = (float)viewport.MaxDepth - (float)viewport.MinDepth;
+            m.M41 = (float)(viewport.X + viewport.Width / 2);
+            m.M42 = (float)(viewport.Y + viewport.Height / 2);
+            m.M43 = viewport.MinDepth;
+            return m;
+        }
+
+        /// スクリーン位置をワールド座標へ変換します。
+        public static Vector3 ScreenToWorld(float screenX, float screenY, float z, Viewport viewport, Matrix view, Matrix proj)
+        {
+            //スクリーン位置
+            Vector3 v = new Vector3(screenX, screenY, z);
+
+            Matrix inv_m = Matrix.Invert(CreateViewportMatrix(viewport));
+            Matrix inv_proj = Matrix.Invert(proj);
+            Matrix inv_view = Matrix.Invert(view);
+
+            //スクリーン位置をワールド座標へ変換
+            return Vector3.TransformCoordinate(v, inv_m * inv_proj * inv_view);
+        }
+
+        /// スクリーン位置をワールド座標へ変換します。
+        public Vector3 ScreenToWorld(float screenX, float screenY, float z)
+        {
+            return ScreenToWorld(screenX, screenY, z, viewport, Transform_View, Transform_Projection);
+        }
+
+        /// ワールド座標をスクリーン位置へ変換します。
+        public static Vector3 WorldToScreen(Vector3 v, Viewport viewport, Matrix view, Matrix proj)
+        {
+            return Vector3.TransformCoordinate(v, view * proj * CreateViewportMatrix(viewport));
+        }
+
+        /// ワールド座標をスクリーン位置へ変換します。
+        public Vector3 WorldToScreen(Vector3 v)
+        {
+            return WorldToScreen(v, viewport, Transform_View, Transform_Projection);
+        }
+
+        /// スクリーン位置をローカル座標へ変換します。
+        public static Vector3 ScreenToLocal(float screenX, float screenY, float z, Viewport viewport, Matrix wvp)
+        {
+            //スクリーン位置
+            Vector3 v = new Vector3(screenX, screenY, z);
+
+            Matrix inv = Matrix.Invert(wvp * CreateViewportMatrix(viewport));
+
+            //スクリーン位置をワールド座標へ変換
+            return Vector3.TransformCoordinate(v, inv);
+        }
+
+        /// スクリーン位置をローカル座標へ変換します。
+        public Vector3 ScreenToLocal(float screenX, float screenY, float z)
+        {
+            return ScreenToLocal(screenX, screenY, z, viewport, world_view_projection_matrix);
+        }
     }
-
-    /// <summary>
-    /// viewport行列を作成します。
-    /// </summary>
-    /// <param name="viewport">viewport</param>
-    /// <returns>viewport行列</returns>
-    public static Matrix CreateViewportMatrix(Viewport viewport)
-    {
-        Matrix m = Matrix.Identity;
-        m.M11 = (float)viewport.Width / 2;
-        m.M22 = -1.0f * (float)viewport.Height / 2;
-        m.M33 = (float)viewport.MaxDepth - (float)viewport.MinDepth;
-        m.M41 = (float)(viewport.X + viewport.Width / 2);
-        m.M42 = (float)(viewport.Y + viewport.Height / 2);
-        m.M43 = viewport.MinDepth;
-        return m;
-    }
-
-    /// スクリーン位置をワールド座標へ変換します。
-    public static Vector3 ScreenToWorld(float screenX, float screenY, float z, Viewport viewport, Matrix view, Matrix proj)
-    {
-        //スクリーン位置
-        Vector3 v = new Vector3(screenX, screenY, z);
-
-        Matrix inv_m = Matrix.Invert(CreateViewportMatrix(viewport));
-        Matrix inv_proj = Matrix.Invert(proj);
-        Matrix inv_view = Matrix.Invert(view);
-
-        //スクリーン位置をワールド座標へ変換
-        return Vector3.TransformCoordinate(v, inv_m * inv_proj * inv_view);
-    }
-
-    /// スクリーン位置をワールド座標へ変換します。
-    public Vector3 ScreenToWorld(float screenX, float screenY, float z)
-    {
-        return ScreenToWorld(screenX, screenY, z, viewport, Transform_View, Transform_Projection);
-    }
-
-    /// ワールド座標をスクリーン位置へ変換します。
-    public static Vector3 WorldToScreen(Vector3 v, Viewport viewport, Matrix view, Matrix proj)
-    {
-        return Vector3.TransformCoordinate(v, view * proj * CreateViewportMatrix(viewport));
-    }
-
-    /// ワールド座標をスクリーン位置へ変換します。
-    public Vector3 WorldToScreen(Vector3 v)
-    {
-        return WorldToScreen(v, viewport, Transform_View, Transform_Projection);
-    }
-
-    /// スクリーン位置をローカル座標へ変換します。
-    public static Vector3 ScreenToLocal(float screenX, float screenY, float z, Viewport viewport, Matrix wvp)
-    {
-        //スクリーン位置
-        Vector3 v = new Vector3(screenX, screenY, z);
-
-        Matrix inv = Matrix.Invert(wvp * CreateViewportMatrix(viewport));
-
-        //スクリーン位置をワールド座標へ変換
-        return Vector3.TransformCoordinate(v, inv);
-    }
-
-    /// スクリーン位置をローカル座標へ変換します。
-    public Vector3 ScreenToLocal(float screenX, float screenY, float z)
-    {
-        return ScreenToLocal(screenX, screenY, z, viewport, world_view_projection_matrix);
-    }
-}
 }
