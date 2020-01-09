@@ -12,5 +12,5 @@
   </Position>
   <Fov>30</Fov>
   <Znear>1.0</Znear>
-  <Zfar>1000.0</Zfar>
+  <Zfar>500.0</Zfar>
 </TSOConfig>

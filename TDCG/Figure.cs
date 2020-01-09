@@ -295,7 +295,9 @@ public class Figure : IDisposable
             return;
         current_frame_index = frame_index;
 
-        slider_matrix.UpdateSpring();
+#if false
+            slider_matrix.UpdateSpring();
+#endif
 
         UpdateBoneMatrices(tmo, GetTMOFrame());
     }

@@ -745,7 +745,7 @@ namespace TDCG
         /// Direct3Dテクスチャ
         public Texture2D d3d_tex;
         /// view of d3d_tex
-        public ShaderResourceView d3d_tex_view;
+        public ShaderResourceView d3d_tex_SR_view;
 
         /// <summary>
         /// 名称
@@ -953,25 +953,24 @@ namespace TDCG
         {
             if (data.Length == 0)
                 return;
-
-            using (var buffer = new SharpDX.DataStream(data.Length, true, true))
+            var ctx = device.ImmediateContext;
+            d3d_tex = new SharpDX.Direct3D11.Texture2D(device, new SharpDX.Direct3D11.Texture2DDescription()
             {
-                buffer.Write(data, 0, data.Length);
-                d3d_tex = new SharpDX.Direct3D11.Texture2D(device, new SharpDX.Direct3D11.Texture2DDescription()
-                {
-                    Width = width,
-                    Height = height,
-                    ArraySize = 1,
-                    BindFlags = SharpDX.Direct3D11.BindFlags.ShaderResource,
-                    Usage = SharpDX.Direct3D11.ResourceUsage.Immutable,
-                    CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.None,
-                    Format = SharpDX.DXGI.Format.B8G8R8A8_UNorm,
-                    MipLevels = 1,
-                    OptionFlags = SharpDX.Direct3D11.ResourceOptionFlags.None,
-                    SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0),
-                }, new SharpDX.DataRectangle(buffer.DataPointer, width * depth));
-            }
-            d3d_tex_view = new ShaderResourceView(device, d3d_tex);
+                Width = width,
+                Height = height,
+                ArraySize = 1,
+                BindFlags = SharpDX.Direct3D11.BindFlags.RenderTarget | SharpDX.Direct3D11.BindFlags.ShaderResource,
+                Usage = SharpDX.Direct3D11.ResourceUsage.Default,
+                CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.Write,
+                Format = SharpDX.DXGI.Format.B8G8R8A8_UNorm,
+                MipLevels = 0,
+                OptionFlags = SharpDX.Direct3D11.ResourceOptionFlags.GenerateMipMaps,
+                SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0),
+            });
+            d3d_tex_SR_view = new ShaderResourceView(device, d3d_tex);
+
+            ctx.UpdateSubresource(data, d3d_tex, 0, this.width * this.depth, this.depth);
+            ctx.GenerateMips(d3d_tex_SR_view);
         }
 
         /// <summary>
@@ -979,8 +978,8 @@ namespace TDCG
         /// </summary>
         public void Dispose()
         {
-            if (d3d_tex_view != null)
-                d3d_tex_view.Dispose();
+            if (d3d_tex_SR_view != null)
+                d3d_tex_SR_view.Dispose();
             if (d3d_tex != null)
                 d3d_tex.Dispose();
         }

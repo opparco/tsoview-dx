@@ -32,7 +32,7 @@ public class TSOConfig
         this.Position = new Vector3(0.0f, +10.0f, +44.0f);
         this.Fov = 30.0f;
         this.Znear = 1.0f;
-        this.Zfar = 1000.0f;
+        this.Zfar = 500.0f;
     }
 
     public void Dump()

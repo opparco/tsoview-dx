@@ -56,6 +56,8 @@ namespace TSOView
         EffectMatrixVariable World_variable;
         EffectMatrixVariable WorldView_variable;
         EffectMatrixVariable WorldViewProjection_variable;
+        /* for normal in view */
+        EffectMatrixVariable View_variable;
         /* for HUD */
         EffectMatrixVariable Projection_variable;
 
@@ -328,6 +330,8 @@ namespace TSOView
             World_variable = effect.GetVariableBySemantic("World").AsMatrix();
             WorldView_variable = effect.GetVariableBySemantic("WorldView").AsMatrix();
             WorldViewProjection_variable = effect.GetVariableBySemantic("WorldViewProjection").AsMatrix();
+            /* for normal in view */
+            View_variable = effect.GetVariableBySemantic("View").AsMatrix();
             /* for HUD */
             Projection_variable = effect.GetVariableBySemantic("Projection").AsMatrix();
 
@@ -368,8 +372,8 @@ namespace TSOView
         void DefineBlendState()
         {
             var desc = BlendStateDescription.Default();
-            desc.RenderTarget[0].IsBlendEnabled = true;
 
+            desc.RenderTarget[0].IsBlendEnabled = true;
             desc.RenderTarget[0].SourceBlend = BlendOption.SourceAlpha;
             desc.RenderTarget[0].DestinationBlend = BlendOption.InverseSourceAlpha;
             desc.RenderTarget[0].BlendOperation = BlendOperation.Add;
@@ -395,7 +399,6 @@ namespace TSOView
             desc.IsDepthEnabled = true;
             desc.DepthWriteMask = DepthWriteMask.Zero;
             */
-            desc.DepthComparison = Comparison.LessEqual;
 
             default_depth_stencil_state = new DepthStencilState(device, desc);
         }
@@ -452,12 +455,12 @@ namespace TSOView
             // Create the depth buffer
             ztex = new Texture2D(device, new Texture2DDescription()
             {
-                Format = SharpDX.DXGI.Format.D32_Float,
+                Format = SharpDX.DXGI.Format.D24_UNorm_S8_UInt,
                 ArraySize = 1,
                 MipLevels = 1,
                 Width = control.ClientSize.Width,
                 Height = control.ClientSize.Height,
-                SampleDescription = swap_chain.Description.SampleDescription,
+                SampleDescription = new SharpDX.DXGI.SampleDescription(4, 0),
                 Usage = ResourceUsage.Default,
                 BindFlags = BindFlags.DepthStencil,
             });
@@ -570,6 +573,8 @@ namespace TSOView
             World_variable.SetMatrix(world_matrix);
             WorldView_variable.SetMatrix(world_view_matrix);
             WorldViewProjection_variable.SetMatrix(world_view_projection_matrix);
+            /* for normal in view */
+            View_variable.SetMatrix(Transform_View);
             /* for HUD */
             Projection_variable.SetMatrix(Transform_Projection);
         }
@@ -618,11 +623,11 @@ namespace TSOView
 
                             TSOTex shadeTex;
                             if (tso.texmap.TryGetValue(scr.shader.ShadeTexName, out shadeTex))
-                                ShadeTex_texture_variable.SetResource(shadeTex.d3d_tex_view);
+                                ShadeTex_texture_variable.SetResource(shadeTex.d3d_tex_SR_view);
 
                             TSOTex colorTex;
                             if (tso.texmap.TryGetValue(scr.shader.ColorTexName, out colorTex))
-                                ColorTex_texture_variable.SetResource(colorTex.d3d_tex_view);
+                                ColorTex_texture_variable.SetResource(colorTex.d3d_tex_SR_view);
                         }
 
                         int technique_idx = scr.shader.technique_idx;
