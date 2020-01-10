@@ -42,7 +42,7 @@ static class Program
         {
             while (loop.NextFrame())
             {
-                form.FrameMove();
+                form.Render();
             }
         }
     }

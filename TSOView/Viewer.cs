@@ -513,7 +513,7 @@ namespace TSOView
         /// <summary>
         /// 次のシーンフレームに進みます。
         /// </summary>
-        public void FrameMove()
+        public void Update()
         {
             if (camera.NeedUpdate)
             {
