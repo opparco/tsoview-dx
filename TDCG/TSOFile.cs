@@ -961,7 +961,7 @@ namespace TDCG
                 ArraySize = 1,
                 BindFlags = SharpDX.Direct3D11.BindFlags.RenderTarget | SharpDX.Direct3D11.BindFlags.ShaderResource,
                 Usage = SharpDX.Direct3D11.ResourceUsage.Default,
-                CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.Write,
+                CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.None,
                 Format = SharpDX.DXGI.Format.B8G8R8A8_UNorm,
                 MipLevels = 0,
                 OptionFlags = SharpDX.Direct3D11.ResourceOptionFlags.GenerateMipMaps,
