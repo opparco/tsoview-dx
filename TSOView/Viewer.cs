@@ -648,8 +648,9 @@ namespace TSOView
                             continue;
                         }
 
-                        ctx.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleStrip;
+                        ctx.InputAssembler.PrimitiveTopology = PrimitiveTopology.PatchListWith3ControlPoints;
                         ctx.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(sub_mesh.vb, 52, 0));
+                        ctx.InputAssembler.SetIndexBuffer(sub_mesh.ib, SharpDX.DXGI.Format.R16_UInt, 0);
 
                         for (int i = 0; i < technique.Description.PassCount; i++)
                         {
@@ -658,7 +659,7 @@ namespace TSOView
                             ctx.Rasterizer.State = default_rasterizer_state;
 
                             technique.GetPassByIndex(i).Apply(ctx);
-                            ctx.Draw(sub_mesh.vertices.Length, 0);
+                            ctx.DrawIndexed(sub_mesh.vindices.Length, 0, 0);
                         }
                     }
             }

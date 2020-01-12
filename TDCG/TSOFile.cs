@@ -86,11 +86,20 @@ namespace TDCG
         /// 頂点配列
         /// </summary>
         public Vertex[] vertices;
+        /// <summary>
+        /// 索引配列
+        /// </summary>
+        public ushort[] vindices;
 
         /// <summary>
         /// Direct3D頂点バッファ
         /// </summary>
         public Buffer vb = null;
+
+        /// <summary>
+        /// Direct3D索引バッファ
+        /// </summary>
+        public Buffer ib = null;
 
         /// <summary>
         /// パレット長さ
@@ -235,32 +244,95 @@ namespace TDCG
         /// <param name="device">device</param>
         public void WriteBuffer(Device device)
         {
+            if (ib != null)
+                ib.Dispose();
             if (vb != null)
                 vb.Dispose();
+
+            Heap<Vertex> vheap = new Heap<Vertex>();
+            List<ushort> vi = new List<ushort>();
+
+            {
+                int cnt = 0;
+                ushort a, b = 0, c = 0;
+                foreach (Vertex v in vertices)
+                {
+                    ushort i;
+                    if (!vheap.map.TryGetValue(v, out i))
+                    {
+                        i = (ushort)vheap.Count;
+                        vheap.Add(v);
+                    }
+
+                    // next tri.
+                    cnt++;
+                    a = b;
+                    b = c;
+                    c = i;
+
+                    if (cnt < 3)
+                        continue;
+
+                    if (a != b && b != c && c != a)
+                    {
+                        if (cnt % 2 == 0)
+                        {
+                            vi.Add(a);
+                            vi.Add(b);
+                            vi.Add(c);
+                        }
+                        else
+                        {
+                            vi.Add(a);
+                            vi.Add(c);
+                            vi.Add(b);
+                        }
+                    }
+                }
+            }
+            vindices = vi.ToArray();
+
             //
             // rewrite vertex buffer
             //
-            DataStream  gs = new DataStream(52 * vertices.Length, false, true);
-            for (int i = 0; i < vertices.Length; i++)
             {
-                Vertex v = vertices[i];
-
-                gs.Write(v.position);
-                for (int j = 0; j < 4; j++)
-                    gs.Write(v.skin_weights[j].weight);
-                gs.Write(v.bone_indices);
-                gs.Write(v.normal);
-                gs.Write(v.u);
-                gs.Write(v.v);
+                DataStream stream = new DataStream(52 * vheap.Count, false, true);
+                foreach (Vertex v in vheap.ary)
+                {
+                    stream.Write(v.position);
+                    for (int j = 0; j < 4; j++)
+                        stream.Write(v.skin_weights[j].weight);
+                    stream.Write(v.bone_indices);
+                    stream.Write(v.normal);
+                    stream.Write(v.u);
+                    stream.Write(v.v);
+                }
+                stream.Position = 0;
+                var desc = new BufferDescription()
+                {
+                    SizeInBytes = 52 * vheap.Count,
+                    Usage = ResourceUsage.Default,
+                    BindFlags = BindFlags.VertexBuffer,
+                };
+                vb = new Buffer(device, stream, desc);
             }
-            gs.Position = 0;
-            var desc = new BufferDescription()
+
+            //
+            // rewrite index buffer
+            //
             {
-                SizeInBytes = 52 * vertices.Length,
-                Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.VertexBuffer,
-            };
-            vb = new Buffer(device, gs, desc);
+                DataStream stream = new DataStream(2 * vindices.Length, false, true);
+                stream.WriteRange<ushort>(vindices);
+                stream.Position = 0;
+
+                var desc = new BufferDescription()
+                {
+                    SizeInBytes = 2 * vindices.Length,
+                    Usage = ResourceUsage.Default,
+                    BindFlags = BindFlags.IndexBuffer,
+                };
+                ib = new Buffer(device, stream, desc);
+            }
         }
 
         /// <summary>
@@ -268,6 +340,8 @@ namespace TDCG
         /// </summary>
         public void Dispose()
         {
+            if (ib != null)
+                ib.Dispose();
             if (vb != null)
                 vb.Dispose();
         }
