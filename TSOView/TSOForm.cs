@@ -32,6 +32,7 @@ namespace TSOView
         internal Key keyCameraReset = Key.D0;
         internal Key keyCenter = Key.F;
         internal Key keyFigureForm = Key.G;
+        internal Key keySwitchFillMode = Key.H;
 
         internal Viewer viewer = null;
         internal FigureForm fig_form = null;
@@ -130,6 +131,10 @@ namespace TSOView
             {
                 fig_form.Show();
                 fig_form.Activate();
+            }
+            if (!keyboardState.IsPressed(keySwitchFillMode) && currentKeyboardState.IsPressed(keySwitchFillMode))
+            {
+                viewer.SwitchFillMode();
             }
 
             float keyL = 0.0f;

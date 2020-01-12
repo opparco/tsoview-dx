@@ -364,6 +364,8 @@ namespace TSOView
             DefineDepthStencilState();
             DefineRasterizerState();
 
+            ctx.Rasterizer.State = default_rasterizer_state;
+
             return true;
         }
 
@@ -404,6 +406,7 @@ namespace TSOView
         }
 
         RasterizerState default_rasterizer_state;
+        RasterizerState wireframe_rasterizer_state;
 
         void DefineRasterizerState()
         {
@@ -412,6 +415,17 @@ namespace TSOView
             desc.IsFrontCounterClockwise = true;
 
             default_rasterizer_state = new RasterizerState(device, desc);
+
+            desc.FillMode = FillMode.Wireframe;
+
+            wireframe_rasterizer_state = new RasterizerState(device, desc);
+        }
+
+        bool wired = false;
+
+        public void SwitchFillMode()
+        {
+            wired = !wired;
         }
 
         static SharpDX.DXGI.SampleDescription DetectSampleDescription(Device device, SharpDX.DXGI.Format format)
@@ -656,7 +670,8 @@ namespace TSOView
                         {
                             ctx.OutputMerger.SetBlendState(default_blend_state);
                             ctx.OutputMerger.SetDepthStencilState(default_depth_stencil_state);
-                            ctx.Rasterizer.State = default_rasterizer_state;
+
+                            ctx.Rasterizer.State = wired ? wireframe_rasterizer_state : default_rasterizer_state;
 
                             technique.GetPassByIndex(i).Apply(ctx);
                             ctx.DrawIndexed(sub_mesh.vindices.Length, 0, 0);

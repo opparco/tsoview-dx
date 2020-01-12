@@ -457,6 +457,31 @@ namespace TDCG
         /// 選択中であるか
         public bool selected = false;
 
+        public override int GetHashCode()
+        {
+            return position.GetHashCode() ^ normal.GetHashCode() ^ u.GetHashCode() ^ v.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Vertex)
+            {
+                Vertex o = (Vertex)obj;
+                return position.Equals(o.position) && normal.Equals(o.normal) && u == o.u && v == o.v;
+            }
+            return false;
+        }
+
+        public bool Equals(Vertex o)
+        {
+            if ((object)o == null)
+            {
+                return false;
+            }
+
+            return position.Equals(o.position) && normal.Equals(o.normal) && u == o.u && v == o.v;
+        }
+
         /// <summary>
         /// 頂点を読みとります。
         /// </summary>
