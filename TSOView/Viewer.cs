@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 //using System.Drawing;
+using System.Globalization;
+using System.IO;
 //using System.Threading;
 //using System.ComponentModel;
 using System.Windows.Forms;
-using System.IO;
 //using System.Text.RegularExpressions;
 //using System.Runtime.InteropServices;
 
@@ -66,6 +67,7 @@ namespace TSOView
         /// since v0.90
         /// </summary>
         EffectMatrixVariable LocalBoneMats_variable;
+        EffectMatrixVariable LocalBoneITMats_variable;
 
         /// <summary>
         /// effect handle for LightDirForced
@@ -336,6 +338,7 @@ namespace TSOView
             Projection_variable = effect.GetVariableBySemantic("Projection").AsMatrix();
 
             LocalBoneMats_variable = effect.GetVariableByName("LocalBoneMats").AsMatrix();
+            LocalBoneITMats_variable = effect.GetVariableByName("LocalBoneITMats").AsMatrix();
             LightDirForced_variable = effect.GetVariableByName("LightDirForced").AsVector();
             UVSCR_variable = effect.GetVariableByName("UVSCR").AsVector();
 
@@ -654,7 +657,16 @@ namespace TSOView
                             continue;
                         }
 
-                        LocalBoneMats_variable.SetMatrix(fig.ClipBoneMatrices(sub_mesh));
+                        Matrix[] mats = fig.ClipBoneMatrices(sub_mesh);
+                        LocalBoneMats_variable.SetMatrix(mats);
+                        Matrix[] itmats = new Matrix[mats.Length];
+                        for (int i = 0; i < mats.Length; i++)
+                        {
+                            itmats[i] = mats[i];
+                            itmats[i].Invert();
+                            itmats[i].Transpose();
+                        }
+                        LocalBoneITMats_variable.SetMatrix(itmats);
 
                         if (!technique.GetPassByIndex(0).IsValid)
                         {
@@ -720,7 +732,7 @@ namespace TSOView
         }
 
         /// <summary>
-        /// バックバッファをBMP形式でファイルに保存します。
+        /// バックバッファをファイルに保存します。
         /// </summary>
         /// <param name="file">ファイル名</param>
         public void SaveToBitmap(string file)
@@ -781,6 +793,19 @@ namespace TSOView
                 ctx.UnmapSubresource(buf1, 0);
             }
             }
+        }
+
+        string GetSaveFileName(string type)
+        {
+            DateTime ti = DateTime.Now;
+            CultureInfo ci = CultureInfo.InvariantCulture;
+            string ti_string = ti.ToString("yyyyMMdd-hhmmss-fff", ci);
+            return string.Format("{0}-{1}.png", ti_string, type);
+        }
+
+        public void SaveToBitmap()
+        {
+            SaveToBitmap(GetSaveFileName("amb"));
         }
 
         /// <summary>

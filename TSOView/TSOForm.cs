@@ -97,7 +97,7 @@ namespace TSOView
 
             if (!keyboardState.IsPressed(keySave) && currentKeyboardState.IsPressed(keySave))
             {
-                viewer.SaveToBitmap("sample.png");
+                viewer.SaveToBitmap();
             }
 
             if (!keyboardState.IsPressed(keyMotion) && currentKeyboardState.IsPressed(keyMotion))
