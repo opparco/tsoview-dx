@@ -632,10 +632,12 @@ namespace TSOView
                     {
                         TSOSubScript scr = tso.sub_scripts[sub_mesh.spec];
 
+                        // TODO: SwitchShader
                         if (sub_mesh.spec != current_spec)
                         {
                             current_spec = sub_mesh.spec;
 
+                            scr.WriteBuffer(device, true);
                             cb_variable.SetConstantBuffer(scr.cb);
 
                             TSOTex shadeTex;

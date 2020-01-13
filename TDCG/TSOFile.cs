@@ -770,35 +770,30 @@ namespace TDCG
         /// <summary>
         /// 定数をDirect3Dバッファに書き込みます。
         /// </summary>
-        public void WriteBuffer()
-        {
-            if (cb != null)
-                WriteBuffer(cb.Device);
-        }
-
-        /// <summary>
-        /// 定数をDirect3Dバッファに書き込みます。
-        /// </summary>
         /// <param name="device">device</param>
-        public void WriteBuffer(Device device)
+        public void WriteBuffer(Device device, bool shader_sync_needed = false)
         {
             if (cb != null)
                 cb.Dispose();
+
+            if (shader_sync_needed)
+                shader.Sync();
+
             //
             // rewrite constant buffer
             //
-            DataStream  gs = new DataStream(96, false, true);
+            DataStream stream = new DataStream(96, false, true);
             {
-                gs.Write(shader.desc);
+                stream.Write(shader.desc);
             }
-            gs.Position = 0;
+            stream.Position = 0;
             var desc = new BufferDescription()
             {
                 SizeInBytes = 96,
                 Usage = ResourceUsage.Default,
                 BindFlags = BindFlags.ConstantBuffer,
             };
-            cb = new Buffer(device, gs, desc);
+            cb = new Buffer(device, stream, desc);
         }
 
         /// <summary>

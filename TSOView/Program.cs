@@ -10,41 +10,40 @@ using SharpDX.Windows;
 
 namespace TSOView
 {
-
-static class Program
-{
-    [STAThread]
-    static void Main(string[] args) 
+    static class Program
     {
-        Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
-
-        var supported = Device.GetSupportedFeatureLevel();
-        Console.WriteLine("device supported {0}", supported);
-
-        if (supported < SharpDX.Direct3D.FeatureLevel.Level_10_0)
-            return;
-
-        TSOConfig tso_config;
-
-        string tso_config_file = Path.Combine(Application.StartupPath, @"config.xml");
-        if (File.Exists(tso_config_file))
-            tso_config = TSOConfig.Load(tso_config_file);
-        else
-            tso_config = new TSOConfig();
-
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-
-        TSOForm form = new TSOForm(tso_config, args);
-
-        form.Show();
-        using (RenderLoop loop = new RenderLoop(form))
+        [STAThread]
+        static void Main(string[] args)
         {
-            while (loop.NextFrame())
+            Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
+
+            var supported = Device.GetSupportedFeatureLevel();
+            Console.WriteLine("device supported {0}", supported);
+
+            if (supported < SharpDX.Direct3D.FeatureLevel.Level_10_0)
+                return;
+
+            TSOConfig tso_config;
+
+            string tso_config_file = Path.Combine(Application.StartupPath, @"config.xml");
+            if (File.Exists(tso_config_file))
+                tso_config = TSOConfig.Load(tso_config_file);
+            else
+                tso_config = new TSOConfig();
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            TSOForm form = new TSOForm(tso_config, args);
+
+            form.Show();
+            using (RenderLoop loop = new RenderLoop(form))
             {
-                form.Render();
+                while (loop.NextFrame())
+                {
+                    form.Render();
+                }
             }
         }
     }
-}
 }

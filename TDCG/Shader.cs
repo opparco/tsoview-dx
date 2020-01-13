@@ -313,7 +313,12 @@ namespace TDCG
         internal float HighLight;
         internal float HighLightBlend;
         internal float HighLightPower;
+#if false
+        /* for UVScroll */
         internal float UVScroll;
+#endif
+        /* for Tessellation */
+        internal float TessFactor;
 
         /* for HLMap */
         internal float FrontLightPower;
@@ -325,6 +330,7 @@ namespace TDCG
         internal Vector4 PenColor;
         //internal Vector4 ShadowColor = new Vector4(0, 0, 0, 1);
         //internal Vector4 ManColor = new Vector4(0, 1, 1, 0.4f);
+
         /* for HLMap */
         internal Vector4 FrontLight;
         internal Vector4 BackLight;
@@ -360,7 +366,10 @@ namespace TDCG
             HighLight = 0.0f,
             HighLightBlend = 10.0f,
             HighLightPower = 100.0f,
+#if false
             UVScroll = 100.0f,
+#endif
+            TessFactor = 1.0f,
 
             FrontLightPower = 0.1f,
             BackLightPower = 0.4f,
@@ -368,6 +377,7 @@ namespace TDCG
             UVScrollY = 0.0f,
 
             PenColor = new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+
             FrontLight = new Vector4(0.9f, 0.9f, 0.9f, 0.2f),
             BackLight = new Vector4(0.2f, 0.4f, 0.5f, 0.6f),
         };
@@ -418,8 +428,13 @@ namespace TDCG
                     case "HighLightPower":
                         desc.HighLightPower = p.GetFloat();
                         break;
+#if false
                     case "UVScroll":
                         desc.UVScroll = p.GetFloat();
+                        break;
+#endif
+                    case "TessFactor":
+                        desc.TessFactor = p.GetFloat();
                         break;
                     case "PenColor":
                         desc.PenColor = p.GetFloat4();
@@ -458,6 +473,16 @@ namespace TDCG
                 shader_parameters[i++] = p;
             }
             Array.Resize(ref shader_parameters, i);
+        }
+
+        // Set shader parameters to description.
+        public void Sync()
+        {
+            foreach (ShaderParameter p in shader_parameters)
+            {
+                if (p.Name == "TessFactor")
+                    desc.TessFactor = p.GetFloat();
+            }
         }
 
         /// <summary>
