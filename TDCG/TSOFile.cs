@@ -809,7 +809,7 @@ namespace TDCG
     /// <summary>
     /// テクスチャ
     /// </summary>
-    public class TSOTex : IDisposable
+    public class TSOTexture : IDisposable
     {
         /// <summary>
         /// 名称
@@ -1292,7 +1292,7 @@ namespace TDCG
         /// <summary>
         /// テクスチャ配列
         /// </summary>
-        public TSOTex[] textures;
+        public TSOTexture[] textures;
         /// <summary>
         /// スクリプト配列
         /// </summary>
@@ -1344,7 +1344,7 @@ namespace TDCG
             }
 
             bw.Write(textures.Length);
-            foreach (TSOTex tex in textures)
+            foreach (TSOTexture tex in textures)
                 tex.Write(bw);
 
             bw.Write(scripts.Length);
@@ -1414,10 +1414,10 @@ namespace TDCG
             }
 
             UInt32 texture_count = reader.ReadUInt32();
-            textures = new TSOTex[texture_count];
+            textures = new TSOTexture[texture_count];
             for (int i = 0; i < texture_count; i++)
             {
-                textures[i] = new TSOTex();
+                textures[i] = new TSOTexture();
                 textures[i].Read(reader);
             }
 
@@ -1517,7 +1517,7 @@ namespace TDCG
         internal Effect effect;
 
         /// テクスチャ名とテクスチャを対応付ける辞書
-        public Dictionary<string, TSOTex> texmap;
+        public Dictionary<string, TSOTexture> texmap;
 
         /// <summary>
         /// 指定device上で開きます。
@@ -1535,9 +1535,9 @@ namespace TDCG
             foreach (TSOSubScript sub_script in sub_scripts)
                 sub_script.WriteBuffer(device);
 
-            texmap = new Dictionary<string, TSOTex>();
+            texmap = new Dictionary<string, TSOTexture>();
 
-            foreach (TSOTex tex in textures)
+            foreach (TSOTexture tex in textures)
             {
                 tex.Open(device);
                 texmap[tex.name] = tex;
@@ -1553,7 +1553,7 @@ namespace TDCG
                 sub_script.Dispose();
             foreach (TSOMesh mesh in meshes)
                 mesh.Dispose();
-            foreach (TSOTex tex in textures)
+            foreach (TSOTexture tex in textures)
                 tex.Dispose();
         }
 

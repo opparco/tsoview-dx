@@ -227,7 +227,7 @@ namespace TDCG.SceneEditor
         /// 指定テクスチャを開き直します。
         /// </summary>
         /// <param name="tex">テクスチャ</param>
-        public void OpenTexture(TSOTex tex)
+        public void OpenTexture(TSOTexture tex)
         {
             tex.Open(device);
         }
@@ -637,11 +637,11 @@ namespace TDCG.SceneEditor
                             scr.WriteBuffer(device, true);
                             cb_variable.SetConstantBuffer(scr.cb);
 
-                            TSOTex shadeTex;
+                            TSOTexture shadeTex;
                             if (tso.texmap.TryGetValue(scr.shader.ShadeTexName, out shadeTex))
                                 ShadeTex_texture_variable.SetResource(shadeTex.d3d_tex_SR_view);
 
-                            TSOTex colorTex;
+                            TSOTexture colorTex;
                             if (tso.texmap.TryGetValue(scr.shader.ColorTexName, out colorTex))
                                 ColorTex_texture_variable.SetResource(colorTex.d3d_tex_SR_view);
                         }
