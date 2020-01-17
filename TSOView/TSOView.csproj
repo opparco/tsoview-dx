@@ -142,9 +142,9 @@
     <Content Include="config.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TDCG.SceneEditor\TDCG.SceneEditor.csproj">
+    <ProjectReference Include="..\TDCG.Editor\TDCG.Editor.csproj">
       <Project>{99a3a1c7-05aa-41c8-ad1a-1bd729307a89}</Project>
-      <Name>TDCG.SceneEditor</Name>
+      <Name>TDCG.Editor</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

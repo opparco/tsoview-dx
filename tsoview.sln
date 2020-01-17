@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSOView", "TSOView\TSOView.
 		{30D26679-E876-46FC-B8C0-E55146316C8C} = {30D26679-E876-46FC-B8C0-E55146316C8C}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDCG.SceneEditor", "TDCG.SceneEditor\TDCG.SceneEditor.csproj", "{99A3A1C7-05AA-41C8-AD1A-1BD729307A89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDCG.Editor", "TDCG.Editor\TDCG.Editor.csproj", "{99A3A1C7-05AA-41C8-AD1A-1BD729307A89}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

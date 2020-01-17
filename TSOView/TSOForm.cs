@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.IO;
 using TDCG;
-using TDCG.SceneEditor;
+using TDCG.Editor;
 
 using SharpDX.Windows;
 using SharpDX.DirectInput;

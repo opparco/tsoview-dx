@@ -20,7 +20,7 @@ using Device = SharpDX.Direct3D11.Device;
 
 using TDCG;
 
-namespace TDCG.SceneEditor
+namespace TDCG.Editor
 {
     public static class TMONodePath
     {

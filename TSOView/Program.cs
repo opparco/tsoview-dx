@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using TDCG.SceneEditor;
+using TDCG.Editor;
 
 using SharpDX.Direct3D11;
 using SharpDX.Windows;
