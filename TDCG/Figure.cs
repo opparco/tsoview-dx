@@ -398,13 +398,18 @@ namespace TDCG
         /// </summary>
         public Vector3 LightDirection { get; set; }
 
+        Vector4 ToVector4(Vector3 v)
+        {
+            return new Vector4(v.X, v.Y, v.Z, 0.0f);
+        }
+
         /// <summary>
         /// 光源方向ベクトルを得ます。
         /// </summary>
         /// <returns></returns>
-        public Vector4 LightDirForced()
+        public Vector4 LightDirForced
         {
-            return new Vector4(LightDirection.X, LightDirection.Y, LightDirection.Z, 0.0f);
+            get { return ToVector4(LightDirection); }
         }
 
         /// <summary>

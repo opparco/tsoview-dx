@@ -619,7 +619,7 @@ namespace TDCG.Editor
 
         void DrawFigure(Figure fig)
         {
-            LightDirForced_variable.Set(fig.LightDirForced());
+            LightDirForced_variable.Set(fig.LightDirForced);
             foreach (TSOFile tso in fig.TSOFileList)
             {
                 int current_spec = -1;
