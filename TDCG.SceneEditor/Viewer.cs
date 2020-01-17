@@ -265,17 +265,14 @@ namespace TDCG.SceneEditor
         Matrix world_view_projection_matrix = Matrix.Identity;
 
         TechniqueMap techmap = new TechniqueMap();
-        TSOConfig tso_config;
 
         /// <summary>
         /// deviceを作成します。
         /// </summary>
         /// <param name="control">レンダリング先となるcontrol</param>
-        /// <param name="tso_config">設定</param>
         /// <returns>deviceの作成に成功したか</returns>
-        public bool InitializeApplication(Control control, TSOConfig tso_config)
+        public bool InitializeApplication(Control control)
         {
-            this.tso_config = tso_config;
             SetControl(control);
 
             control.MouseDown += new MouseEventHandler(form_OnMouseDown);
@@ -492,11 +489,11 @@ namespace TDCG.SceneEditor
             ctx.Rasterizer.SetViewport(viewport);
 
             // Setup new projection matrix with correct aspect ratio
-            Transform_Projection = Matrix.PerspectiveFovRH(
-                    MathUtil.DegreesToRadians(tso_config.Fov),
-                    (float)viewport.Width / (float)viewport.Height,
-                    tso_config.Znear,
-                    tso_config.Zfar);
+            float aspect = viewport.Width / (float)viewport.Height;
+            float d = 1.0f; // zn
+            float h = d * (float)Math.Tan(Math.PI / 12.0);
+            float w = h * aspect;
+            Transform_Projection = Matrix.PerspectiveRH(w * 2.0f, h * 2.0f, 1.0f, 500.0f);
         }
 
         bool motion_enabled = false;

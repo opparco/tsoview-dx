@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 using SharpDX;
 
-namespace TDCG.SceneEditor
+namespace TSOView
 {
 
     public class TSOConfig

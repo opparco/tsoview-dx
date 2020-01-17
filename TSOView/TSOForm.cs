@@ -62,7 +62,7 @@ namespace TSOView
 
             this.fig_form = new FigureForm();
 
-            if (viewer.InitializeApplication(this, tso_config))
+            if (viewer.InitializeApplication(this))
             {
                 viewer.figures.FigureEvent += delegate (object sender, EventArgs e)
                 {
