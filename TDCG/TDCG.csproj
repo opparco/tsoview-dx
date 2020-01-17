@@ -48,13 +48,9 @@
     <Compile Include="FigureCollection.cs" />
     <Compile Include="Heap.cs" />
     <Compile Include="Helper.cs" />
-    <Compile Include="IProportion.cs" />
-    <Compile Include="Morphing.cs" />
-    <Compile Include="NodesRange.cs" />
     <Compile Include="PNGFile.cs" />
     <Compile Include="PNGSaveFile.cs" />
     <Compile Include="PNGWriter.cs" />
-    <Compile Include="ProportionList.cs" />
     <Compile Include="Shader.cs" />
     <Compile Include="SimpleCamera.cs" />
     <Compile Include="Extensions\BinaryReaderMethods.cs" />
@@ -63,9 +59,6 @@
     <Compile Include="TBNFile.cs" />
     <Compile Include="TechniqueMap.cs" />
     <Compile Include="TMOFile.cs" />
-    <Compile Include="TPOConfig.cs" />
-    <Compile Include="TPOFile.cs" />
-    <Compile Include="TPOFileList.cs" />
     <Compile Include="TSOFile.cs" />
   </ItemGroup>
   <ItemGroup>
