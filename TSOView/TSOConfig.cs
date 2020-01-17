@@ -7,14 +7,14 @@ using System.Xml.Serialization;
 
 using SharpDX;
 
-namespace TSOView
+namespace TDCG.SceneEditor
 {
 
-public class TSOConfig
-{
-    public Size ClientSize { get; set; }
-    SharpDX.Color screen_color;
-    public SharpDX.Color ScreenColor { get { return screen_color; } }
+    public class TSOConfig
+    {
+        public Size ClientSize { get; set; }
+        SharpDX.Color screen_color;
+        public SharpDX.Color ScreenColor { get { return screen_color; } }
 #if false
     public string ScreenColorName
     {
@@ -22,36 +22,36 @@ public class TSOConfig
         set { screen_color = ColorTranslator.FromHtml(value); }
     }
 #endif
-    public Vector3 Position; // of camera
-    public float Fov, Znear, Zfar; // of projection
+        public Vector3 Position; // of camera
+        public float Fov, Znear, Zfar; // of projection
 
-    public TSOConfig()
-    {
-        this.ClientSize = new Size(800, 600);
-        screen_color = SharpDX.Color.LightGray;
-        this.Position = new Vector3(0.0f, +10.0f, +44.0f);
-        this.Fov = 30.0f;
-        this.Znear = 1.0f;
-        this.Zfar = 500.0f;
-    }
+        public TSOConfig()
+        {
+            this.ClientSize = new Size(800, 600);
+            screen_color = SharpDX.Color.LightGray;
+            this.Position = new Vector3(0.0f, +10.0f, +44.0f);
+            this.Fov = 30.0f;
+            this.Znear = 1.0f;
+            this.Zfar = 500.0f;
+        }
 
-    public void Dump()
-    {
-        XmlSerializer serializer = new XmlSerializer(typeof(TSOConfig));
-        XmlWriterSettings settings = new XmlWriterSettings();
-        settings.Indent = true;
-        XmlWriter writer = XmlWriter.Create(Console.Out, settings);
-        serializer.Serialize(writer, this);
-        writer.Close();
-    }
+        public void Dump()
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(TSOConfig));
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            XmlWriter writer = XmlWriter.Create(Console.Out, settings);
+            serializer.Serialize(writer, this);
+            writer.Close();
+        }
 
-    public static TSOConfig Load(string source_file)
-    {
-        XmlReader reader = XmlReader.Create(source_file);
-        XmlSerializer serializer = new XmlSerializer(typeof(TSOConfig));
-        TSOConfig config = serializer.Deserialize(reader) as TSOConfig;
-        reader.Close();
-        return config;
+        public static TSOConfig Load(string source_file)
+        {
+            XmlReader reader = XmlReader.Create(source_file);
+            XmlSerializer serializer = new XmlSerializer(typeof(TSOConfig));
+            TSOConfig config = serializer.Deserialize(reader) as TSOConfig;
+            reader.Close();
+            return config;
+        }
     }
-}
 }

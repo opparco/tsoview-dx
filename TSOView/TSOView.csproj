@@ -65,7 +65,6 @@
       <DependentUpon>FigureForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
-    <Compile Include="Viewer.cs" />
     <None Include="app.config" />
     <Compile Include="TSOConfig.cs" />
     <Compile Include="TSOForm.cs">
@@ -141,5 +140,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="config.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TDCG.SceneEditor\TDCG.SceneEditor.csproj">
+      <Project>{99a3a1c7-05aa-41c8-ad1a-1bd729307a89}</Project>
+      <Name>TDCG.SceneEditor</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.IO;
 //using CSScriptLibrary;
 using TDCG;
+using TDCG.SceneEditor;
 
 using SharpDX.Windows;
 using SharpDX.DirectInput;
