@@ -306,8 +306,10 @@ namespace TDCG.Editor
             }
             try
             {
-                var shader_bytecode = ShaderBytecode.FromFile(effect_file);
-                effect = new Effect(device, shader_bytecode);
+                using (var shader_bytecode = ShaderBytecode.FromFile(effect_file))
+                {
+                    effect = new Effect(device, shader_bytecode);
+                }
             }
             catch (SharpDX.CompilationException e)
             {
@@ -353,7 +355,11 @@ namespace TDCG.Editor
 
             // Define an input layout to be passed to the vertex shader.
             var technique = effect.GetTechniqueByIndex(0);
-            il = new InputLayout(device, technique.GetPassByIndex(0).Description.Signature, TSOSubMesh.ie);
+            var pass = technique.GetPassByIndex(0);
+            using (var signature = pass.Description.Signature)
+            {
+                il = new InputLayout(device, signature, TSOSubMesh.ie);
+            }
 
             // Setup the immediate context to use the shaders and model we defined.
             ctx.InputAssembler.InputLayout = il;
