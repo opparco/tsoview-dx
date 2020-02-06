@@ -230,19 +230,10 @@ namespace TDCG
         };
 
         /// <summary>
-        /// 頂点をDirect3Dバッファに書き込みます。
-        /// </summary>
-        public void WriteBuffer()
-        {
-            if (vb != null)
-                WriteBuffer(vb.Device);
-        }
-
-        /// <summary>
-        /// 頂点をDirect3Dバッファに書き込みます。
+        /// 指定device上でDirect3Dバッファを作成します。
         /// </summary>
         /// <param name="device">device</param>
-        public void WriteBuffer(Device device)
+        public void CreateD3DBuffers(Device device)
         {
             if (ib != null)
                 ib.Dispose();
@@ -768,10 +759,10 @@ namespace TDCG
         public Buffer cb = null;
 
         /// <summary>
-        /// 定数をDirect3Dバッファに書き込みます。
+        /// 指定device上でDirect3Dバッファを作成します。
         /// </summary>
         /// <param name="device">device</param>
-        public void WriteBuffer(Device device, bool shader_sync_needed = false)
+        public void CreateD3DBuffers(Device device, bool shader_sync_needed = false)
         {
             if (cb != null)
                 cb.Dispose();
@@ -1040,10 +1031,10 @@ namespace TDCG
         }
 
         /// <summary>
-        /// 指定deviceで開きます。
+        /// 指定device上でDirect3Dテクスチャを作成します。
         /// </summary>
         /// <param name="device">device</param>
-        public void Open(Device device)
+        public void CreateD3DTexture(Device device)
         {
             if (data.Length == 0)
                 return;
@@ -1520,26 +1511,26 @@ namespace TDCG
         public Dictionary<string, TSOTexture> texmap;
 
         /// <summary>
-        /// 指定device上で開きます。
+        /// 指定device上でDirect3D Resourcesを作成します。
         /// </summary>
         /// <param name="device">device</param>
         /// <param name="effect">effect</param>
-        public void Open(Device device, Effect effect)
+        public void CreateD3DResources(Device device, Effect effect)
         {
             this.device = device;
             this.effect = effect;
 
             foreach (TSOMesh mesh in meshes)
             foreach (TSOSubMesh sub_mesh in mesh.sub_meshes)
-                sub_mesh.WriteBuffer(device);
+                sub_mesh.CreateD3DBuffers(device);
             foreach (TSOSubScript sub_script in sub_scripts)
-                sub_script.WriteBuffer(device);
+                sub_script.CreateD3DBuffers(device);
 
             texmap = new Dictionary<string, TSOTexture>();
 
             foreach (TSOTexture tex in textures)
             {
-                tex.Open(device);
+                tex.CreateD3DTexture(device);
                 texmap[tex.name] = tex;
             }
         }

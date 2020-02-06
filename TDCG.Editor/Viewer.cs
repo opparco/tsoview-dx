@@ -229,7 +229,7 @@ namespace TDCG.Editor
         /// <param name="tex">テクスチャ</param>
         public void OpenTexture(TSOTexture tex)
         {
-            tex.Open(device);
+            tex.CreateD3DTexture(device);
         }
 
         SimpleCamera camera = new SimpleCamera();
@@ -349,7 +349,7 @@ namespace TDCG.Editor
             figures.Camera = camera;
             figures.TSOFileOpen += delegate (TSOFile tso)
             {
-                tso.Open(device, effect);
+                tso.CreateD3DResources(device, effect);
                 techmap.AssignTechniqueIndices(tso);
             };
 
@@ -640,7 +640,7 @@ namespace TDCG.Editor
                         {
                             current_spec = sub_mesh.spec;
 
-                            scr.WriteBuffer(device, true);
+                            scr.CreateD3DBuffers(device, true);
                             cb_variable.SetConstantBuffer(scr.cb);
 
                             TSOTexture shadeTex;
