@@ -29,31 +29,31 @@ namespace TSOView
             this.btnUp = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
             this.lvTSOFiles = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvSubScripts = new System.Windows.Forms.ListView();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.gvShaderParams = new System.Windows.Forms.DataGridView();
             this.tbSlideEye = new System.Windows.Forms.TrackBar();
             this.tbSlideLeg = new System.Windows.Forms.TrackBar();
             this.tbSlideArm = new System.Windows.Forms.TrackBar();
             this.tbSlideWaist = new System.Windows.Forms.TrackBar();
-            this.tbSlideBust = new System.Windows.Forms.TrackBar();
+            this.tbSlideOppai = new System.Windows.Forms.TrackBar();
             this.lbSlideEye = new System.Windows.Forms.Label();
             this.lbSlideLeg = new System.Windows.Forms.Label();
             this.lbSlideArm = new System.Windows.Forms.Label();
             this.lbSlideWaist = new System.Windows.Forms.Label();
-            this.lbSlideBust = new System.Windows.Forms.Label();
-            this.lbSlideTall = new System.Windows.Forms.Label();
-            this.tbSlideTall = new System.Windows.Forms.TrackBar();
+            this.lbSlideOppai = new System.Windows.Forms.Label();
+            this.lbSlideAge = new System.Windows.Forms.Label();
+            this.tbSlideAge = new System.Windows.Forms.TrackBar();
             this.btnSave = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gvShaderParams)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSlideEye)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSlideLeg)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSlideArm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSlideWaist)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbSlideBust)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbSlideTall)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbSlideOppai)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbSlideAge)).BeginInit();
             this.SuspendLayout();
             // 
             // btnDump
@@ -178,14 +178,14 @@ namespace TSOView
             this.tbSlideWaist.TabIndex = 9;
             this.tbSlideWaist.ValueChanged += new System.EventHandler(this.tbSlideWaist_ValueChanged);
             // 
-            // tbSlideBust
+            // tbSlideOppai
             // 
-            this.tbSlideBust.Location = new System.Drawing.Point(604, 371);
-            this.tbSlideBust.Maximum = 20;
-            this.tbSlideBust.Name = "tbSlideBust";
-            this.tbSlideBust.Size = new System.Drawing.Size(168, 45);
-            this.tbSlideBust.TabIndex = 10;
-            this.tbSlideBust.ValueChanged += new System.EventHandler(this.tbSlideBust_ValueChanged);
+            this.tbSlideOppai.Location = new System.Drawing.Point(604, 371);
+            this.tbSlideOppai.Maximum = 20;
+            this.tbSlideOppai.Name = "tbSlideOppai";
+            this.tbSlideOppai.Size = new System.Drawing.Size(168, 45);
+            this.tbSlideOppai.TabIndex = 10;
+            this.tbSlideOppai.ValueChanged += new System.EventHandler(this.tbSlideOppai_ValueChanged);
             // 
             // lbSlideEye
             // 
@@ -223,32 +223,32 @@ namespace TSOView
             this.lbSlideWaist.TabIndex = 14;
             this.lbSlideWaist.Text = "Waist";
             // 
-            // lbSlideBust
+            // lbSlideOppai
             // 
-            this.lbSlideBust.AutoSize = true;
-            this.lbSlideBust.Location = new System.Drawing.Point(604, 356);
-            this.lbSlideBust.Name = "lbSlideBust";
-            this.lbSlideBust.Size = new System.Drawing.Size(29, 12);
-            this.lbSlideBust.TabIndex = 15;
-            this.lbSlideBust.Text = "Bust";
+            this.lbSlideOppai.AutoSize = true;
+            this.lbSlideOppai.Location = new System.Drawing.Point(604, 356);
+            this.lbSlideOppai.Name = "lbSlideOppai";
+            this.lbSlideOppai.Size = new System.Drawing.Size(34, 12);
+            this.lbSlideOppai.TabIndex = 15;
+            this.lbSlideOppai.Text = "Oppai";
             // 
-            // lbSlideTall
+            // lbSlideAge
             // 
-            this.lbSlideTall.AutoSize = true;
-            this.lbSlideTall.Location = new System.Drawing.Point(604, 407);
-            this.lbSlideTall.Name = "lbSlideTall";
-            this.lbSlideTall.Size = new System.Drawing.Size(24, 12);
-            this.lbSlideTall.TabIndex = 17;
-            this.lbSlideTall.Text = "Tall";
+            this.lbSlideAge.AutoSize = true;
+            this.lbSlideAge.Location = new System.Drawing.Point(604, 407);
+            this.lbSlideAge.Name = "lbSlideAge";
+            this.lbSlideAge.Size = new System.Drawing.Size(25, 12);
+            this.lbSlideAge.TabIndex = 17;
+            this.lbSlideAge.Text = "Age";
             // 
-            // tbSlideTall
+            // tbSlideAge
             // 
-            this.tbSlideTall.Location = new System.Drawing.Point(604, 422);
-            this.tbSlideTall.Maximum = 20;
-            this.tbSlideTall.Name = "tbSlideTall";
-            this.tbSlideTall.Size = new System.Drawing.Size(168, 45);
-            this.tbSlideTall.TabIndex = 16;
-            this.tbSlideTall.ValueChanged += new System.EventHandler(this.tbSlideTall_ValueChanged);
+            this.tbSlideAge.Location = new System.Drawing.Point(604, 422);
+            this.tbSlideAge.Maximum = 20;
+            this.tbSlideAge.Name = "tbSlideAge";
+            this.tbSlideAge.Size = new System.Drawing.Size(168, 45);
+            this.tbSlideAge.TabIndex = 16;
+            this.tbSlideAge.ValueChanged += new System.EventHandler(this.tbSlideAge_ValueChanged);
             // 
             // btnSave
             // 
@@ -266,13 +266,13 @@ namespace TSOView
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.lbSlideEye);
             this.Controls.Add(this.tbSlideEye);
-            this.Controls.Add(this.lbSlideTall);
-            this.Controls.Add(this.tbSlideTall);
-            this.Controls.Add(this.lbSlideBust);
+            this.Controls.Add(this.lbSlideAge);
+            this.Controls.Add(this.tbSlideAge);
+            this.Controls.Add(this.lbSlideOppai);
             this.Controls.Add(this.lbSlideWaist);
             this.Controls.Add(this.lbSlideArm);
             this.Controls.Add(this.lbSlideLeg);
-            this.Controls.Add(this.tbSlideBust);
+            this.Controls.Add(this.tbSlideOppai);
             this.Controls.Add(this.tbSlideWaist);
             this.Controls.Add(this.tbSlideArm);
             this.Controls.Add(this.tbSlideLeg);
@@ -290,8 +290,8 @@ namespace TSOView
             ((System.ComponentModel.ISupportInitialize)(this.tbSlideLeg)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSlideArm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSlideWaist)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbSlideBust)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbSlideTall)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbSlideOppai)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbSlideAge)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -311,14 +311,14 @@ namespace TSOView
         private System.Windows.Forms.TrackBar tbSlideLeg;
         private System.Windows.Forms.TrackBar tbSlideArm;
         private System.Windows.Forms.TrackBar tbSlideWaist;
-        private System.Windows.Forms.TrackBar tbSlideBust;
+        private System.Windows.Forms.TrackBar tbSlideOppai;
         private System.Windows.Forms.Label lbSlideEye;
         private System.Windows.Forms.Label lbSlideLeg;
         private System.Windows.Forms.Label lbSlideArm;
         private System.Windows.Forms.Label lbSlideWaist;
-        private System.Windows.Forms.Label lbSlideBust;
-        private System.Windows.Forms.Label lbSlideTall;
-        private System.Windows.Forms.TrackBar tbSlideTall;
+        private System.Windows.Forms.Label lbSlideOppai;
+        private System.Windows.Forms.Label lbSlideAge;
+        private System.Windows.Forms.TrackBar tbSlideAge;
         private System.Windows.Forms.DataGridView gvShaderParams;
         private System.Windows.Forms.Button btnSave;
     }

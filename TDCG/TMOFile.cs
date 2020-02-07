@@ -563,11 +563,11 @@ namespace TDCG
         }
 
         /// <summary>
-        /// 指定比率で拡大します。
+        /// 指定割合で拡大します。
         /// </summary>
-        /// <param name="x">X軸拡大比率</param>
-        /// <param name="y">Y軸拡大比率</param>
-        /// <param name="z">Z軸拡大比率</param>
+        /// <param name="x">X軸拡大割合</param>
+        /// <param name="y">Y軸拡大割合</param>
+        /// <param name="z">Z軸拡大割合</param>
         public void Scale(float x, float y, float z)
         {
             /*

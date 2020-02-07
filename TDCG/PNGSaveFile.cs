@@ -145,12 +145,12 @@ public class PNGSaveFile
                     5: つり目たれ目
                     6: やわらか
                  */
-                fig.slider_matrix.TallRatio = ratios[0];
-                fig.slider_matrix.ArmRatio = ratios[1];
-                fig.slider_matrix.LegRatio = ratios[2];
-                fig.slider_matrix.WaistRatio = ratios[3];
-                fig.slider_matrix.BustRatio = ratios[4];
-                fig.slider_matrix.EyeRatio = ratios[5];
+                fig.slider_matrix.AgeRate = ratios[0];
+                fig.slider_matrix.ArmRate = ratios[1];
+                fig.slider_matrix.LegRate = ratios[2];
+                fig.slider_matrix.WaistRate = ratios[3];
+                fig.slider_matrix.OppaiRate = ratios[4];
+                fig.slider_matrix.EyeRate = ratios[5];
 
                 //fig.TransformTpo();
             };
@@ -171,12 +171,12 @@ public class PNGSaveFile
                 using (Stream stream = File.OpenRead(source_file))
                     data.Read(stream);
 
-                fig.slider_matrix.TallRatio = data.GetSliderValue(4);
-                fig.slider_matrix.ArmRatio = data.GetSliderValue(5);
-                fig.slider_matrix.LegRatio = data.GetSliderValue(6);
-                fig.slider_matrix.WaistRatio = data.GetSliderValue(7);
-                fig.slider_matrix.BustRatio = data.GetSliderValue(0);
-                fig.slider_matrix.EyeRatio = data.GetSliderValue(8);
+                fig.slider_matrix.AgeRate = data.GetSliderValue(4);
+                fig.slider_matrix.ArmRate = data.GetSliderValue(5);
+                fig.slider_matrix.LegRate = data.GetSliderValue(6);
+                fig.slider_matrix.WaistRate = data.GetSliderValue(7);
+                fig.slider_matrix.OppaiRate = data.GetSliderValue(0);
+                fig.slider_matrix.EyeRate = data.GetSliderValue(8);
 
                 for (int i = 0; i < fig.TSOFileList.Count; i++)
                 {

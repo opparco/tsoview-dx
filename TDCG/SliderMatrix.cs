@@ -498,42 +498,42 @@ namespace TDCG
             return m;
         }
 
-        /// 指定比率に比例するscaling factorを得ます。
-        public static Vector3 GetVector3Ratio(Vector3 min, Vector3 max, float ratio)
+        /// 指定割合に比例するscaling factorを得ます。
+        public static Vector3 GetVector3Rate(Vector3 min, Vector3 max, float rate)
         {
-            return Vector3.Lerp(min, max, ratio);
+            return Vector3.Lerp(min, max, rate);
         }
 
-        /// 指定比率に比例する変形行列を得ます。
-        public static Matrix GetMatrixRatio(Vector3 min, Vector3 max, float ratio)
+        /// 指定割合に比例する変形行列を得ます。
+        public static Matrix GetMatrixRate(Vector3 min, Vector3 max, float rate)
         {
-            return Matrix.Scaling(GetVector3Ratio(min, max, ratio));
+            return Matrix.Scaling(GetVector3Rate(min, max, rate));
         }
 
-        /// 指定比率に比例する変形行列を得ます。
-        public static Matrix GetMatrixRatio(Matrix min, Matrix max, float ratio)
+        /// 指定割合に比例する変形行列を得ます。
+        public static Matrix GetMatrixRate(Matrix min, Matrix max, float rate)
         {
             Matrix m;
 
-            m.M11 = Helper.Lerp(min.M11, max.M11, ratio);
-            m.M12 = Helper.Lerp(min.M12, max.M12, ratio);
-            m.M13 = Helper.Lerp(min.M13, max.M13, ratio);
-            m.M14 = Helper.Lerp(min.M14, max.M14, ratio);
+            m.M11 = Helper.Lerp(min.M11, max.M11, rate);
+            m.M12 = Helper.Lerp(min.M12, max.M12, rate);
+            m.M13 = Helper.Lerp(min.M13, max.M13, rate);
+            m.M14 = Helper.Lerp(min.M14, max.M14, rate);
 
-            m.M21 = Helper.Lerp(min.M21, max.M21, ratio);
-            m.M22 = Helper.Lerp(min.M22, max.M22, ratio);
-            m.M23 = Helper.Lerp(min.M23, max.M23, ratio);
-            m.M24 = Helper.Lerp(min.M24, max.M24, ratio);
+            m.M21 = Helper.Lerp(min.M21, max.M21, rate);
+            m.M22 = Helper.Lerp(min.M22, max.M22, rate);
+            m.M23 = Helper.Lerp(min.M23, max.M23, rate);
+            m.M24 = Helper.Lerp(min.M24, max.M24, rate);
 
-            m.M31 = Helper.Lerp(min.M31, max.M31, ratio);
-            m.M32 = Helper.Lerp(min.M32, max.M32, ratio);
-            m.M33 = Helper.Lerp(min.M33, max.M33, ratio);
-            m.M34 = Helper.Lerp(min.M34, max.M34, ratio);
+            m.M31 = Helper.Lerp(min.M31, max.M31, rate);
+            m.M32 = Helper.Lerp(min.M32, max.M32, rate);
+            m.M33 = Helper.Lerp(min.M33, max.M33, rate);
+            m.M34 = Helper.Lerp(min.M34, max.M34, rate);
 
-            m.M41 = Helper.Lerp(min.M41, max.M41, ratio);
-            m.M42 = Helper.Lerp(min.M42, max.M42, ratio);
-            m.M43 = Helper.Lerp(min.M43, max.M43, ratio);
-            m.M44 = Helper.Lerp(min.M44, max.M44, ratio);
+            m.M41 = Helper.Lerp(min.M41, max.M41, rate);
+            m.M42 = Helper.Lerp(min.M42, max.M42, rate);
+            m.M43 = Helper.Lerp(min.M43, max.M43, rate);
+            m.M44 = Helper.Lerp(min.M44, max.M44, rate);
 
             return m;
         }
@@ -581,108 +581,108 @@ namespace TDCG
         /// スライダ変形行列を生成します。
         public SliderMatrix()
         {
-            ArmRatio = 0.5f;
-            LegRatio = 0.5f;
-            WaistRatio = 0.0f; //scaling factorから見て胴まわりの基準は0.0である
-            BustRatio = 0.5f;
-            TallRatio = 0.5f;
-            EyeRatio = 0.5f;
+            ArmRate = 0.5f;
+            LegRate = 0.5f;
+            WaistRate = 0.0f; //scaling factorから見て胴まわりの基準は0.0である
+            OppaiRate = 0.5f;
+            AgeRate = 0.5f;
+            EyeRate = 0.5f;
         }
 
-        float arm_ratio;
-        /// うでスライダ比率
-        public float ArmRatio
+        float arm_rate;
+        /// うでスライダ割合
+        public float ArmRate
         {
-            get { return arm_ratio; }
+            get { return arm_rate; }
             set
             {
-                arm_ratio = value;
-                ArmDummy = GetVector3Ratio(GetMinArmDummy(), GetMaxArmDummy(), arm_ratio);
-                Arm = GetVector3Ratio(GetMinArm(), GetMaxArm(), arm_ratio);
+                arm_rate = value;
+                ArmDummy = GetVector3Rate(GetMinArmDummy(), GetMaxArmDummy(), arm_rate);
+                Arm = GetVector3Rate(GetMinArm(), GetMaxArm(), arm_rate);
             }
         }
 
-        float leg_ratio;
-        /// あしスライダ比率
-        public float LegRatio
+        float leg_rate;
+        /// あしスライダ割合
+        public float LegRate
         {
-            get { return leg_ratio; }
+            get { return leg_rate; }
             set
             {
-                leg_ratio = value;
-                HipsDummy = GetVector3Ratio(GetMinHipsDummy(), GetMaxHipsDummy(), leg_ratio);
-                UpLeg = GetVector3Ratio(GetMinUpLeg(), GetMaxUpLeg(), leg_ratio);
-                UpLegRoll = GetVector3Ratio(GetMinUpLegRoll(), GetMaxUpLegRoll(), leg_ratio);
-                LegRoll = GetVector3Ratio(GetMinLegRoll(), GetMaxLegRoll(), leg_ratio);
+                leg_rate = value;
+                HipsDummy = GetVector3Rate(GetMinHipsDummy(), GetMaxHipsDummy(), leg_rate);
+                UpLeg = GetVector3Rate(GetMinUpLeg(), GetMaxUpLeg(), leg_rate);
+                UpLegRoll = GetVector3Rate(GetMinUpLegRoll(), GetMaxUpLegRoll(), leg_rate);
+                LegRoll = GetVector3Rate(GetMinLegRoll(), GetMaxLegRoll(), leg_rate);
             }
         }
 
-        float waist_ratio;
-        /// 胴まわりスライダ比率
-        public float WaistRatio
+        float waist_rate;
+        /// 胴まわりスライダ割合
+        public float WaistRate
         {
-            get { return waist_ratio; }
+            get { return waist_rate; }
             set
             {
-                waist_ratio = value;
-                SpineDummy = GetVector3Ratio(GetMinSpineDummy(), GetMaxSpineDummy(), waist_ratio);
-                Spine1 = GetVector3Ratio(GetMinSpine1(), GetMaxSpine1(), waist_ratio);
+                waist_rate = value;
+                SpineDummy = GetVector3Rate(GetMinSpineDummy(), GetMaxSpineDummy(), waist_rate);
+                Spine1 = GetVector3Rate(GetMinSpine1(), GetMaxSpine1(), waist_rate);
             }
         }
 
-        float bust_ratio;
-        /// おっぱいスライダ比率
-        public float BustRatio
+        float oppai_rate;
+        /// おっぱいスライダ割合
+        public float OppaiRate
         {
-            get { return bust_ratio; }
+            get { return oppai_rate; }
             set
             {
-                bust_ratio = value;
+                oppai_rate = value;
 
                 if (Flat())
                 {
-                    float ratio = bust_ratio / FlatRatio;
+                    float rate = oppai_rate / oppai_flat_rate;
                     float scale = 1.0f;
 
-                    Chichi = GetVector3Ratio(new Vector3(scale, scale, scale), GetMinChichi(), ratio);
+                    Chichi = GetVector3Rate(new Vector3(scale, scale, scale), GetMinChichi(), rate);
                 }
                 else
-                    Chichi = GetVector3Ratio(GetMinChichi(), GetMaxChichi(), (bust_ratio - FlatRatio) / (1.0f - FlatRatio));
+                    Chichi = GetVector3Rate(GetMinChichi(), GetMaxChichi(), (oppai_rate - oppai_flat_rate) / (1.0f - oppai_flat_rate));
             }
         }
 
         /// 貧乳であるか
         public bool Flat()
         {
-            return bust_ratio < FlatRatio;
+            return oppai_rate < oppai_flat_rate;
         }
 
-        /// 貧乳境界比率
-        public static float FlatRatio = 0.2250F;
+        /// 貧乳境界割合
+        public static float oppai_flat_rate = 0.2250F;
 
-        float tall_ratio;
-        /// 姉妹スライダ比率
-        public float TallRatio
+        float age_rate;
+        /// 姉妹スライダ割合
+        public float AgeRate
         {
-            get { return tall_ratio; }
+            get { return age_rate; }
             set
             {
-                tall_ratio = value;
-                Local = GetVector3Ratio(GetMinLocal(), GetMaxLocal(), tall_ratio);
-                FaceOya = GetVector3Ratio(GetMinFaceOya(), GetMaxFaceOya(), tall_ratio);
+                age_rate = value;
+                Local = GetVector3Rate(GetMinLocal(), GetMaxLocal(), age_rate);
+                FaceOya = GetVector3Rate(GetMinFaceOya(), GetMaxFaceOya(), age_rate);
             }
         }
 
-        float eye_ratio;
-        /// たれ目つり目スライダ比率
-        public float EyeRatio
+        float eye_rate;
+        /// たれ目つり目スライダ割合
+        public float EyeRate
         {
-            get { return eye_ratio; }
+            get { return eye_rate; }
             set
             {
-                eye_ratio = value;
-                EyeR = GetMatrixRatio(GetMinEyeR(), GetMaxEyeR(), eye_ratio) * Matrix.Invert(FaceOyaDefault);
-                EyeL = GetMatrixRatio(GetMinEyeL(), GetMaxEyeL(), eye_ratio) * Matrix.Invert(FaceOyaDefault);
+                eye_rate = value;
+                EyeR = GetMatrixRate(GetMinEyeR(), GetMaxEyeR(), eye_rate) * Matrix.Invert(FaceOyaDefault);
+                EyeL = GetMatrixRate(GetMinEyeL(), GetMaxEyeL(), eye_rate) * Matrix.Invert(FaceOyaDefault);
             }
         }
 
@@ -715,45 +715,45 @@ namespace TDCG
         /// おっぱい変形：貧乳を行います。
         public void TransformChichiFlat(TMONode tmo_node, ref Matrix m)
         {
-            float ratio = bust_ratio / FlatRatio;
+            float rate = oppai_rate / oppai_flat_rate;
 
             switch (tmo_node.Name)
             {
                 case "Chichi_Right1":
-                    m = GetMatrixRatio(GetMinChichiR1(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiR1(), m, rate);
                     break;
                 case "Chichi_Right2":
-                    m = GetMatrixRatio(GetMinChichiR2(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiR2(), m, rate);
                     break;
                 case "Chichi_Right3":
-                    m = GetMatrixRatio(GetMinChichiR3(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiR3(), m, rate);
                     break;
                 case "Chichi_Right4":
-                    m = GetMatrixRatio(GetMinChichiR4(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiR4(), m, rate);
                     break;
                 case "Chichi_Right5":
-                    m = GetMatrixRatio(GetMinChichiR5(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiR5(), m, rate);
                     break;
                 case "Chichi_Right5_end":
-                    m = GetMatrixRatio(GetMinChichiR5E(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiR5E(), m, rate);
                     break;
                 case "Chichi_Left1":
-                    m = GetMatrixRatio(GetMinChichiL1(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiL1(), m, rate);
                     break;
                 case "Chichi_Left2":
-                    m = GetMatrixRatio(GetMinChichiL2(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiL2(), m, rate);
                     break;
                 case "Chichi_Left3":
-                    m = GetMatrixRatio(GetMinChichiL3(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiL3(), m, rate);
                     break;
                 case "Chichi_Left4":
-                    m = GetMatrixRatio(GetMinChichiL4(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiL4(), m, rate);
                     break;
                 case "Chichi_Left5":
-                    m = GetMatrixRatio(GetMinChichiL5(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiL5(), m, rate);
                     break;
                 case "Chichi_Left5_End":
-                    m = GetMatrixRatio(GetMinChichiL5E(), m, ratio);
+                    m = GetMatrixRate(GetMinChichiL5E(), m, rate);
                     break;
             }
 
@@ -882,7 +882,7 @@ namespace TDCG
         public void UpdateSpring()
         {
             //質量
-            double m = BustRatio + 0.25;
+            double m = OppaiRate + 0.25;
             //反力
             double force = -SpringDesc.Constant * position + m * 9.8;
 
