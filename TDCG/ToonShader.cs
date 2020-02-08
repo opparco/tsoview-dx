@@ -24,6 +24,11 @@ namespace TDCG
         EffectShaderResourceVariable ShadeTex_texture_variable;
         EffectShaderResourceVariable ColorTex_texture_variable;
 
+        /// <summary>
+        /// Direct3D定数バッファ
+        /// </summary>
+        public Buffer cb = null;
+
         Shader current_shader = null;
 
         public ToonShader(Device device, Effect effect)
@@ -43,6 +48,14 @@ namespace TDCG
                 return;
             }
             LoadTechmap(techmap_file);
+
+            cb = new Buffer(device, new BufferDescription()
+            {
+                SizeInBytes = 96,
+                Usage = ResourceUsage.Default,
+                BindFlags = BindFlags.ConstantBuffer,
+            });
+            cb_variable.SetConstantBuffer(cb);
         }
 
         /// techmapを読み込みます。
@@ -79,8 +92,12 @@ namespace TDCG
                 return;
             current_shader = shader;
 
-            CreateD3DBuffers(shader);
-            cb_variable.SetConstantBuffer(cb);
+            shader.Sync();
+
+            //
+            // rewrite constant buffer
+            //
+            device.ImmediateContext.UpdateSubresource(ref shader.desc, cb);
 
             {
                 ShaderResourceView d3d_tex_SR_view = fetch_d3d_texture_SR_view(shader.ShadeTexName);
@@ -95,39 +112,6 @@ namespace TDCG
             }
 
             technique = effect.GetTechniqueByIndex(techmap[shader.technique_name]);
-        }
-
-        /// <summary>
-        /// Direct3D定数バッファ
-        /// </summary>
-        public Buffer cb = null;
-
-        /// <summary>
-        /// 指定device上でDirect3Dバッファを作成します。
-        /// </summary>
-        /// <param name="device">device</param>
-        public void CreateD3DBuffers(Shader shader)
-        {
-            if (cb != null)
-                cb.Dispose();
-
-            shader.Sync();
-
-            //
-            // rewrite constant buffer
-            //
-            DataStream stream = new DataStream(96, false, true);
-            {
-                stream.Write(shader.desc);
-            }
-            stream.Position = 0;
-            var desc = new BufferDescription()
-            {
-                SizeInBytes = 96,
-                Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.ConstantBuffer,
-            };
-            cb = new Buffer(device, stream, desc);
         }
 
         /// <summary>

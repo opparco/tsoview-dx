@@ -995,7 +995,6 @@ namespace TDCG
         {
             if (data.Length == 0)
                 return;
-            var ctx = device.ImmediateContext;
             d3d_tex = new SharpDX.Direct3D11.Texture2D(device, new SharpDX.Direct3D11.Texture2DDescription()
             {
                 Width = width,
@@ -1011,8 +1010,12 @@ namespace TDCG
             });
             d3d_tex_SR_view = new ShaderResourceView(device, d3d_tex);
 
-            ctx.UpdateSubresource(data, d3d_tex, 0, this.width * this.depth, this.depth);
-            ctx.GenerateMips(d3d_tex_SR_view);
+            {
+                DeviceContext ctx = device.ImmediateContext;
+
+                ctx.UpdateSubresource(data, d3d_tex, 0, this.width * this.depth, this.depth);
+                ctx.GenerateMips(d3d_tex_SR_view);
+            }
         }
 
         /// <summary>
