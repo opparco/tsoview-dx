@@ -348,10 +348,6 @@ namespace TDCG
         /// テクニック名
         public string technique_name;
 
-        /// テクニック名に対応するindex
-        /// techmapにより代入されます。
-        public int technique_idx = 0;
-
         internal ShaderDescription desc = new ShaderDescription()
         {
             Ambient = 0.0f,

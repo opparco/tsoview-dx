@@ -81,10 +81,7 @@ namespace TDCG.Editor
         /// </summary>
         EffectVectorVariable UVSCR_variable;
 
-        EffectConstantBuffer cb_variable;
-
-        EffectShaderResourceVariable ShadeTex_texture_variable;
-        EffectShaderResourceVariable ColorTex_texture_variable;
+        ToonShader toon_shader;
 
         /// <summary>
         /// buffer #0 (back buffer)
@@ -223,15 +220,6 @@ namespace TDCG.Editor
             return new Vector3(x, y, z);
         }
 
-        /// <summary>
-        /// 指定テクスチャを開き直します。
-        /// </summary>
-        /// <param name="tex">テクスチャ</param>
-        public void OpenTexture(TSOTexture tex)
-        {
-            tex.CreateD3DTexture(device);
-        }
-
         SimpleCamera camera = new SimpleCamera();
 
         /// <summary>
@@ -263,8 +251,6 @@ namespace TDCG.Editor
         protected Matrix Transform_Projection = Matrix.Identity;
 
         Matrix world_view_projection_matrix = Matrix.Identity;
-
-        TechniqueMap techmap = new TechniqueMap();
 
         /// <summary>
         /// deviceを作成します。
@@ -320,14 +306,6 @@ namespace TDCG.Editor
             sw.Stop();
             Console.WriteLine("toonshader.fx.bin read time: " + sw.Elapsed);
 
-            string techmap_file = Path.Combine(Application.StartupPath, @"techmap.txt");
-            if (!File.Exists(techmap_file))
-            {
-                Console.WriteLine("File not found: " + techmap_file);
-                return false;
-            }
-            techmap.Load(techmap_file);
-
             World_variable = effect.GetVariableBySemantic("World").AsMatrix();
             WorldView_variable = effect.GetVariableBySemantic("WorldView").AsMatrix();
             WorldViewProjection_variable = effect.GetVariableBySemantic("WorldViewProjection").AsMatrix();
@@ -341,16 +319,12 @@ namespace TDCG.Editor
             LightDirForced_variable = effect.GetVariableByName("LightDirForced").AsVector();
             UVSCR_variable = effect.GetVariableByName("UVSCR").AsVector();
 
-            cb_variable = effect.GetConstantBufferByName("cb");
-
-            ShadeTex_texture_variable = effect.GetVariableByName("ShadeTex_texture").AsShaderResource();
-            ColorTex_texture_variable = effect.GetVariableByName("ColorTex_texture").AsShaderResource();
+            toon_shader = new ToonShader(device, effect);
 
             figures.Camera = camera;
             figures.TSOFileOpen += delegate (TSOFile tso)
             {
-                tso.CreateD3DResources(device, effect);
-                techmap.AssignTechniqueIndices(tso);
+                tso.CreateD3DResources(device);
             };
 
             // Define an input layout to be passed to the vertex shader.
@@ -628,39 +602,14 @@ namespace TDCG.Editor
             LightDirForced_variable.Set(fig.LightDirForced);
             foreach (TSOFile tso in fig.TSOFileList)
             {
-                int current_spec = -1;
+                toon_shader.RemoveShader();
 
                 foreach (TSOMesh mesh in tso.meshes)
                     foreach (TSOSubMesh sub_mesh in mesh.sub_meshes)
                     {
                         TSOSubScript scr = tso.sub_scripts[sub_mesh.spec];
 
-                        // TODO: SwitchShader
-                        if (sub_mesh.spec != current_spec)
-                        {
-                            current_spec = sub_mesh.spec;
-
-                            scr.CreateD3DBuffers(device, true);
-                            cb_variable.SetConstantBuffer(scr.cb);
-
-                            TSOTexture shadeTex;
-                            if (tso.texmap.TryGetValue(scr.shader.ShadeTexName, out shadeTex))
-                                ShadeTex_texture_variable.SetResource(shadeTex.d3d_tex_SR_view);
-
-                            TSOTexture colorTex;
-                            if (tso.texmap.TryGetValue(scr.shader.ColorTexName, out colorTex))
-                                ColorTex_texture_variable.SetResource(colorTex.d3d_tex_SR_view);
-                        }
-
-                        int technique_idx = scr.shader.technique_idx;
-
-                        var technique = effect.GetTechniqueByIndex(technique_idx);
-                        if (!technique.IsValid)
-                        {
-                            string technique_name = scr.shader.technique_name;
-                            Console.WriteLine("technique {0} is not valid", technique_name);
-                            continue;
-                        }
+                        toon_shader.SwitchShader(scr.shader, tso.GetD3DTextureSRViewByName);
 
                         Matrix[] mats = fig.ClipBoneMatrices(sub_mesh);
                         LocalBoneMats_variable.SetMatrix(mats);
@@ -673,15 +622,11 @@ namespace TDCG.Editor
                         }
                         LocalBoneITMats_variable.SetMatrix(itmats);
 
-                        if (!technique.GetPassByIndex(0).IsValid)
-                        {
-                            Console.WriteLine("pass #0 is not valid");
-                            continue;
-                        }
-
                         ctx.InputAssembler.PrimitiveTopology = PrimitiveTopology.PatchListWith3ControlPoints;
                         ctx.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(sub_mesh.vb, 52, 0));
                         ctx.InputAssembler.SetIndexBuffer(sub_mesh.ib, SharpDX.DXGI.Format.R16_UInt, 0);
+
+                        var technique = toon_shader.Technique;
 
                         for (int i = 0; i < technique.Description.PassCount; i++)
                         {
@@ -724,6 +669,9 @@ namespace TDCG.Editor
                 buf0_view.Dispose();
             if (buf0 != null)
                 buf0.Dispose();
+
+            if (toon_shader != null)
+                toon_shader.Dispose();
 
             if (swap_chain != null)
                 swap_chain.Dispose();

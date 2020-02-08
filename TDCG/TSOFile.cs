@@ -668,7 +668,7 @@ namespace TDCG
     /// サブスクリプト
     /// </summary>
     [TypeConverter(typeof(ExpandableObjectConverter))]
-    public class TSOSubScript : IDisposable
+    public class TSOSubScript
     {
         internal string name;
         internal string file;
@@ -751,49 +751,6 @@ namespace TDCG
         public void SaveShader()
         {
             this.lines = this.shader.GetLines();
-        }
-
-        /// <summary>
-        /// Direct3D定数バッファ
-        /// </summary>
-        public Buffer cb = null;
-
-        /// <summary>
-        /// 指定device上でDirect3Dバッファを作成します。
-        /// </summary>
-        /// <param name="device">device</param>
-        public void CreateD3DBuffers(Device device, bool shader_sync_needed = false)
-        {
-            if (cb != null)
-                cb.Dispose();
-
-            if (shader_sync_needed)
-                shader.Sync();
-
-            //
-            // rewrite constant buffer
-            //
-            DataStream stream = new DataStream(96, false, true);
-            {
-                stream.Write(shader.desc);
-            }
-            stream.Position = 0;
-            var desc = new BufferDescription()
-            {
-                SizeInBytes = 96,
-                Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.ConstantBuffer,
-            };
-            cb = new Buffer(device, stream, desc);
-        }
-
-        /// <summary>
-        /// Direct3Dバッファを破棄します。
-        /// </summary>
-        public void Dispose()
-        {
-            if (cb != null)
-                cb.Dispose();
         }
     }
 
@@ -1504,35 +1461,40 @@ namespace TDCG
             return tmo;
         }
 
-        internal Device device;
-        internal Effect effect;
+        /// shader設定上の texture name と d3d texture SR view を関連付ける辞書
+        public Dictionary<string, ShaderResourceView> d3d_texturemap;
 
-        /// テクスチャ名とテクスチャを対応付ける辞書
-        public Dictionary<string, TSOTexture> texmap;
+        public ShaderResourceView GetD3DTextureSRViewByName(string name)
+        {
+            ShaderResourceView d3d_tex_SR_view;
+            if (name != null && d3d_texturemap.TryGetValue(name, out d3d_tex_SR_view))
+                return d3d_tex_SR_view;
+            else
+                return null;
+        }
+
+        void GenerateD3DTexturemap()
+        {
+            d3d_texturemap = new Dictionary<string, ShaderResourceView>();
+
+            foreach (TSOTexture tex in textures)
+                d3d_texturemap.Add(tex.name, tex.d3d_tex_SR_view);
+        }
 
         /// <summary>
         /// 指定device上でDirect3D Resourcesを作成します。
         /// </summary>
         /// <param name="device">device</param>
-        /// <param name="effect">effect</param>
-        public void CreateD3DResources(Device device, Effect effect)
+        public void CreateD3DResources(Device device)
         {
-            this.device = device;
-            this.effect = effect;
-
             foreach (TSOMesh mesh in meshes)
             foreach (TSOSubMesh sub_mesh in mesh.sub_meshes)
                 sub_mesh.CreateD3DBuffers(device);
-            foreach (TSOSubScript sub_script in sub_scripts)
-                sub_script.CreateD3DBuffers(device);
-
-            texmap = new Dictionary<string, TSOTexture>();
 
             foreach (TSOTexture tex in textures)
-            {
                 tex.CreateD3DTexture(device);
-                texmap[tex.name] = tex;
-            }
+
+            GenerateD3DTexturemap();
         }
 
         /// <summary>
@@ -1540,8 +1502,8 @@ namespace TDCG
         /// </summary>
         public void Dispose()
         {
-            foreach (TSOSubScript sub_script in sub_scripts)
-                sub_script.Dispose();
+            d3d_texturemap.Clear();
+
             foreach (TSOMesh mesh in meshes)
                 mesh.Dispose();
             foreach (TSOTexture tex in textures)
