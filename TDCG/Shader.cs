@@ -313,10 +313,6 @@ namespace TDCG
         internal float HighLight;
         internal float HighLightBlend;
         internal float HighLightPower;
-#if false
-        /* for UVScroll */
-        internal float UVScroll;
-#endif
         /* for Tessellation */
         internal float TessFactor;
 
@@ -366,9 +362,6 @@ namespace TDCG
             HighLight = 0.0f,
             HighLightBlend = 10.0f,
             HighLightPower = 100.0f,
-#if false
-            UVScroll = 100.0f,
-#endif
             TessFactor = 1.0f,
 
             FrontLightPower = 0.1f,
@@ -428,11 +421,6 @@ namespace TDCG
                     case "HighLightPower":
                         desc.HighLightPower = p.GetFloat();
                         break;
-#if false
-                    case "UVScroll":
-                        desc.UVScroll = p.GetFloat();
-                        break;
-#endif
                     case "TessFactor":
                         desc.TessFactor = p.GetFloat();
                         break;
