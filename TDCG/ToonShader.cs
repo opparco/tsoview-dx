@@ -138,6 +138,8 @@ namespace TDCG
             if (cb != null)
                 cb.Dispose();
 
+            this.technique = null;
+
             ColorTex_texture_variable?.Dispose();
             ShadeTex_texture_variable?.Dispose();
             cb_variable?.Dispose();

@@ -639,6 +639,7 @@ namespace TDCG.Editor
                             ctx.DrawIndexed(sub_mesh.vindices.Length, 0, 0);
                         }
                     }
+                toon_shader.RemoveShader();
             }
         }
 
