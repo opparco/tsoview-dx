@@ -23,7 +23,7 @@ namespace TDCG
         Vector3 translation;
         
         //更新する必要があるか
-        bool needUpdate;
+        bool need_update;
         
         //view行列
         Matrix view;
@@ -31,22 +31,46 @@ namespace TDCG
         /// <summary>
         /// 角度
         /// </summary>
-        public Vector3 Angle { get { return angle; } set { angle = value; } }
+        public Vector3 Angle
+        {
+            get { return angle; }
+            set
+            {
+                angle = value;
+                need_update = true;
+            }
+        }
 
         /// <summary>
         /// 回転中心
         /// </summary>
-        public Vector3 Center { get { return center; } set { center = value; } }
+        public Vector3 Center
+        {
+            get { return center; }
+            set
+            {
+                center = value;
+                need_update = true;
+            }
+        }
 
         /// <summary>
         /// 位置変位
         /// </summary>
-        public Vector3 Translation { get { return translation; } set { translation = value; } }
+        public Vector3 Translation
+        {
+            get { return translation; }
+            set
+            {
+                translation = value;
+                need_update = true;
+            }
+        }
     
         /// <summary>
         /// 更新する必要があるか
         /// </summary>
-        public bool NeedUpdate { get { return needUpdate; } }
+        public bool NeedUpdate { get { return need_update; } }
 
         /// <summary>
         /// view行列
@@ -61,7 +85,7 @@ namespace TDCG
             angle = Vector3.Zero;
             center = Vector3.Zero;
             translation = new Vector3(0.0f, 0.0f, +10.0f);
-            needUpdate = true;
+            need_update = true;
             view = Matrix.Identity;
         }
 
@@ -73,7 +97,7 @@ namespace TDCG
             center = Vector3.Zero;
             translation = new Vector3(0.0f, 0.0f, +10.0f);
             angle = Vector3.Zero;
-            needUpdate = true;
+            need_update = true;
         }
 
         /// <summary>
@@ -82,7 +106,7 @@ namespace TDCG
         public void ResetTranslation()
         {
             translation = new Vector3(0.0f, 0.0f, +10.0f);
-            needUpdate = true;
+            need_update = true;
         }
 
         /// <summary>
@@ -97,7 +121,7 @@ namespace TDCG
             if (delta != Vector3.Zero)
             {
                 angle += delta;
-                needUpdate = true;
+                need_update = true;
             }
         }
 
@@ -106,7 +130,7 @@ namespace TDCG
         /// </summary>
         public void Update()
         {
-            if (!needUpdate)
+            if (!need_update)
                 return;
 
             Matrix m = Matrix.RotationYawPitchRoll(angle.Y, angle.X, angle.Z);
@@ -117,7 +141,7 @@ namespace TDCG
 
             view = Matrix.Invert(Matrix.Translation(translation) * m);
 
-            needUpdate = false;
+            need_update = false;
         }
 
         /// <summary>
@@ -135,7 +159,7 @@ namespace TDCG
         public void SetCenter(Vector3 center)
         {
             this.center = center;
-            needUpdate = true;
+            need_update = true;
         }
         /// <summary>
         /// 回転中心を設定します。
@@ -155,7 +179,7 @@ namespace TDCG
         public void SetTranslation(Vector3 translation)
         {
             this.translation = translation;
-            needUpdate = true;
+            need_update = true;
         }
         /// <summary>
         /// 位置変位を設定します。
@@ -175,7 +199,7 @@ namespace TDCG
         public void SetAngle(Vector3 angle)
         {
             this.angle = angle;
-            needUpdate = true;
+            need_update = true;
         }
         /// <summary>
         /// 角度を設定します。
@@ -200,7 +224,7 @@ namespace TDCG
             if (delta != Vector3.Zero)
             {
                 this.translation += delta;
-                needUpdate = true;
+                need_update = true;
             }
         }
     }

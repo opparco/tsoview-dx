@@ -336,6 +336,11 @@ namespace TDCG
             }
         }
 
+        static void Dump(ref Vector3 v)
+        {
+                    Console.WriteLine("{0:F4} {1:F4} {2:F4}", v.X, v.Y, v.Z);
+        }
+
         /// <summary>
         /// 指定パスからPNGFileを読み込みフィギュアを作成して追加します。
         /// </summary>
@@ -348,6 +353,12 @@ namespace TDCG
             {
                 sav.CameraUpdate += delegate(Vector3 translation, Vector3 angle)
                 {
+#if false
+                    Console.WriteLine("-- translation");
+                    Dump(ref translation);
+                    Console.WriteLine("-- angle");
+                    Dump(ref angle);
+#endif
                     camera.Reset();
                     camera.Translation = translation;
                     camera.Angle = angle;

@@ -574,9 +574,10 @@ namespace TDCG.Editor
             {
                 Matrix world;
                 fig.GetWorldMatrix(out world);
-
+#if false
                 Console.WriteLine("-- dump world");
                 Dump(ref world);
+#endif
                 UpdateTransform(ref world);
             }
             LightDirForced_variable.Set(fig.LightDirForced);
