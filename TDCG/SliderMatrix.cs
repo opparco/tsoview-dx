@@ -11,14 +11,6 @@ using SharpDX.Direct3D11;
 
 namespace TDCG
 {
-    public struct SpringDescription
-    {
-        //ばね定数
-        public double Constant;
-        //抵抗
-        public double Friction;
-    }
-
     /// スライダ変形行列
     public class SliderMatrix
     {
@@ -853,50 +845,6 @@ namespace TDCG
         public void ScaleChichi(ref Matrix m)
         {
             Scale1(ref m, this.Chichi);
-        }
-
-        /// 揺れるおっぱい
-        /// 揺れる方向はローカル座標系のY軸です。
-        public void TranslateChichi(ref Matrix m)
-        {
-            m.M42 += (float)position;
-        }
-
-        static SpringDescription SpringDesc = new SpringDescription()
-        {
-            Constant = 100.0,
-            Friction = 1.0 - 0.005,
-        };
-
-        //加速度
-        double accel = 9.8;
-        //速度
-        double velocity = 0.0;
-        //位置
-        double position = 0.0;
-
-        //微小時間
-        static double dt = 0.01;
-
-        //単振動
-        public void UpdateSpring()
-        {
-            //質量
-            double m = OppaiRate + 0.25;
-            //反力
-            double force = -SpringDesc.Constant * position + m * 9.8;
-
-            accel = force / m;
-            velocity += accel * dt;
-            velocity *= SpringDesc.Friction;
-            position += velocity * dt;
-        }
-
-        public void ResetSpring()
-        {
-            accel = 9.8;
-            velocity = 0.0;
-            position = 0.0;
         }
     }
 }

@@ -305,8 +305,6 @@ namespace TDCG
             {
                 if (slider_matrix.Flat())
                     slider_matrix.TransformChichiFlat(tmo_node, ref m);
-                else
-                    slider_matrix.TranslateChichi(ref m);
             }
             else
                 // todo: face_p
@@ -419,11 +417,6 @@ namespace TDCG
         {
             foreach (TSOFile tso in TSOFileList)
                 tso.Dispose();
-        }
-
-        public void ResetSpring()
-        {
-            slider_matrix.ResetSpring();
         }
     }
 }

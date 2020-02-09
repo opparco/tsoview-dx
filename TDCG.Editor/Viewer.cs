@@ -22,12 +22,6 @@ using TDCG;
 
 namespace TDCG.Editor
 {
-    public static class TMONodePath
-    {
-        public static string Chichi_Right3 = "|W_Hips|W_Spine_Dummy|W_Spine1|W_Spine2|W_Spine3|Chichi_Right1|Chichi_Right2|Chichi_Right3";
-        public static string Chichi_Left3 = "|W_Hips|W_Spine_Dummy|W_Spine1|W_Spine2|W_Spine3|Chichi_Left1|Chichi_Left2|Chichi_Left3";
-    }
-
     /// <summary>
     /// TSOFileをDirect3D上でレンダリングします。
     /// </summary>
@@ -127,25 +121,6 @@ namespace TDCG.Editor
                 case MouseButtons.Left:
                     if (Control.ModifierKeys == Keys.Control)
                         figures.SetLightDirection(ScreenToOrientation(e.X, e.Y));
-                    else
-                    {
-                        //おっぱいを触っているか判定する
-                        bool touched = false;
-
-                        //注視点 on screen
-                        float x = (float)(viewport.Width / 2);
-                        float y = (float)(viewport.Height / 2);
-
-                        Figure fig;
-                        if (figures.TryGetFigure(out fig))
-                        {
-                            // todo: figures.TryGetFigure again
-                            touched = touched || FindBoneOnScreenPoint(x, y, fig.Tmo.nodemap[TMONodePath.Chichi_Right3]);
-                            touched = touched || FindBoneOnScreenPoint(x, y, fig.Tmo.nodemap[TMONodePath.Chichi_Left3]);
-                        }
-                        if (touched)
-                            fig.ResetSpring();
-                    }
                     break;
             }
 
