@@ -6,7 +6,7 @@ using System.Threading;
 //using System.ComponentModel;
 using System.Windows.Forms;
 using System.IO;
-using System.Text.RegularExpressions;
+
 using SharpDX;
 using SharpDX.Direct3D11;
 
@@ -247,10 +247,6 @@ namespace TDCG
                 return;
             current_frame_index = frame_index;
 
-#if false
-            slider_matrix.UpdateSpring();
-#endif
-
             UpdateBoneMatrices(tmo, GetTMOFrame());
         }
 
@@ -279,8 +275,6 @@ namespace TDCG
                 UpdateBoneMatricesWithoutSlider(tmo_node, tmo_frame);
             }
         }
-
-        static Regex re_chichi = new Regex(@"\AChichi");
 
         /// <summary>
         /// bone行列を更新します。
