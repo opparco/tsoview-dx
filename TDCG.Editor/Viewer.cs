@@ -357,8 +357,6 @@ namespace TDCG.Editor
         {
             var desc = RasterizerStateDescription.Default();
 
-            desc.IsFrontCounterClockwise = true;
-
             default_rasterizer_state = new RasterizerState(device, desc);
 
             desc.FillMode = FillMode.Wireframe;
@@ -436,9 +434,17 @@ namespace TDCG.Editor
             // Setup new projection matrix with correct aspect ratio
             float aspect = viewport.Width / (float)viewport.Height;
             float d = 1.0f; // zn
-            float h = d * (float)Math.Tan(Math.PI / 12.0);
+            // TODO: config
+            const float fovy = (float)(30.0 * Math.PI / 180.0);
+            float h = d * (float)Math.Tan(fovy / 2.0f);
             float w = h * aspect;
-            Transform_Projection = Matrix.PerspectiveRH(w * 2.0f, h * 2.0f, 1.0f, 500.0f);
+
+            Matrix bias = Matrix.Identity;
+            bias.M41 = 1/(float)viewport.Width;
+            bias.M42 = -1/(float)viewport.Height;
+            bias.M44 = 1.002f;
+
+            Transform_Projection = Matrix.PerspectiveRH(w * 2.0f, h * 2.0f, 1.0f, 500.0f) * bias;
         }
 
         bool motion_enabled = false;

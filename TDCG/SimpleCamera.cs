@@ -139,7 +139,7 @@ namespace TDCG
             m.M43 = center.Z;
             m.M44 = 1;
 
-            view = Matrix.Invert(Matrix.Translation(translation) * m);
+            view = Matrix.Invert(m) * Matrix.Translation(-translation);
 
             need_update = false;
         }

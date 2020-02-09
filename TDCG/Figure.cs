@@ -281,6 +281,8 @@ namespace TDCG
         /// </summary>
         protected void UpdateBoneMatrices(TMONode tmo_node, TMOFrame tmo_frame)
         {
+            //matrixStack.Push();
+
             if (tmo_frame != null)
             {
                 // TMO animation
@@ -294,15 +296,17 @@ namespace TDCG
 
                 slider_matrix.Transform(name, ref m);
 
-                matrixStack.Push(m * matrixStack.Peek());
-                m = matrixStack.Peek();
+                //matrixStack.MultiplyMatrixLocal(m);
+                m = m * matrixStack.Peek();
+                matrixStack.Push(m);
 
                 slider_matrix.TransformWithoutStack(name, ref m);
             }
             else
             {
-                matrixStack.Push(m * matrixStack.Peek());
-                m = matrixStack.Peek();
+                //matrixStack.MultiplyMatrixLocal(m);
+                m = m * matrixStack.Peek();
+                matrixStack.Push(m);
             }
 
             tmo_node.combined_matrix = m;
