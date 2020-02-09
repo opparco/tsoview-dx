@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-//using System.Drawing;
-using System.Threading;
-//using System.ComponentModel;
-using System.Windows.Forms;
 using System.IO;
+using System.Text.RegularExpressions;
+
 using SharpDX;
 using SharpDX.Direct3D11;
 
@@ -14,430 +12,175 @@ namespace TDCG
     /// スライダ変形行列
     public class SliderMatrix
     {
-        /// 姉妹スライダ0.0でのlocal scaling factor
-        public static Vector3 GetMinLocal()
-        {
-            float scale = 0.9520f;
-            return new Vector3(scale, scale, scale);
-        }
 
-        /// 姉妹スライダ1.0でのlocal scaling factor
-        public static Vector3 GetMaxLocal()
-        {
-            float scale = 1.05f;
-            return new Vector3(scale, scale, scale);
-        }
-
-        /// 姉妹スライダ0.0でのface_oya scaling factor
-        public static Vector3 GetMinFaceOya()
-        {
-            return new Vector3(1.224272f, 1.066630f, 1.224272f);
-        }
-
-        /// 姉妹スライダ1.0でのface_oya scaling factor
-        public static Vector3 GetMaxFaceOya()
-        {
-            return new Vector3(0.967304f, 1.025342f, 0.967304f);
-        }
-
-        /// 胴まわりスライダ0.0でのW_Spine_Dummy scaling factor
-        public static Vector3 GetMinSpineDummy()
-        {
-            return new Vector3(1.0f, 1.0f, 1.0f);
-        }
-
-        /// 胴まわりスライダ1.0でのW_Spine_Dummy scaling factor
-        public static Vector3 GetMaxSpineDummy()
-        {
-            return new Vector3(1.0890f, 1.0f, 0.9235f);
-        }
-
-        /// 胴まわりスライダ0.0でのW_Spine1 scaling factor
-        public static Vector3 GetMinSpine1()
-        {
-            return new Vector3(1.0f, 1.0f, 1.0f);
-        }
-
-        /// 胴まわりスライダ1.0でのW_Spine1 scaling factor
-        public static Vector3 GetMaxSpine1()
-        {
-            return new Vector3(1.1800f, 1.0f, 1.0f);
-        }
-
-        /// あしスライダ0.0でのW_(LR)Hips_Dummy scaling factor
-        public static Vector3 GetMinHipsDummy()
-        {
-            return new Vector3(1.0f, 1.0f, 1.0f);
-        }
-
-        /// あしスライダ1.0でのW_(LR)Hips_Dummy scaling factor
-        public static Vector3 GetMaxHipsDummy()
-        {
-            return new Vector3(1.2001f, 1.0f, 1.0f);
-        }
-
-        /// あしスライダ0.0でのW_(LR)UpLeg scaling factor
-        public static Vector3 GetMinUpLeg()
-        {
-            return new Vector3(0.8091f, 1.0f, 0.8190f);
-        }
-
-        /// あしスライダ1.0でのW_(LR)UpLeg scaling factor
-        public static Vector3 GetMaxUpLeg()
-        {
-            return new Vector3(1.2001f, 1.0f, 1.0f);
-        }
-
-        /// あしスライダ0.0でのW_(LR)UpLegRoll scaling factor
-        public static Vector3 GetMinUpLegRoll()
-        {
-            return new Vector3(0.8091f, 1.0f, 0.8190f);
-        }
-
-        /// あしスライダ1.0でのW_(LR)UpLegRoll scaling factor
-        public static Vector3 GetMaxUpLegRoll()
-        {
-            return new Vector3(1.2012f, 1.0f, 1.0f);
-        }
-
-        /// あしスライダ0.0でのW_(LR)LegRoll scaling factor
-        public static Vector3 GetMinLegRoll()
-        {
-            return new Vector3(0.8091f, 1.0f, 0.8190f);
-        }
-
-        /// あしスライダ1.0でのW_(LR)LegRoll scaling factor
-        public static Vector3 GetMaxLegRoll()
-        {
-            return new Vector3(0.9878f, 1.0f, 1.0f);
-        }
-
-        /// うでスライダ0.0でのW_(LR)Arm_Dummy scaling factor
-        public static Vector3 GetMinArmDummy()
-        {
-            return new Vector3(1.0f, 1.0f, 1.0f);
-        }
-
-        /// うでスライダ1.0でのW_(LR)Arm_Dummy scaling factor
-        public static Vector3 GetMaxArmDummy()
-        {
-            return new Vector3(1.0f, 1.1760f, 1.0f);
-        }
-
-        /// うでスライダ0.0でのW_(LR)Arm scaling factor
-        public static Vector3 GetMinArm()
-        {
-            return new Vector3(1.0f, 0.7350f, 1.0f);
-        }
-
-        /// うでスライダ1.0でのW_(LR)Arm scaling factor
-        public static Vector3 GetMaxArm()
-        {
-            return new Vector3(1.0f, 1.1760f, 1.0f);
-        }
-
+        /// 変形行列 ChichiR1 0.0 着衣
+        /// 変形行列 ChichiR2 0.0 着衣
+        /// 変形行列 ChichiR3 0.0 着衣
         /// 変形行列 ChichiR1 0.0
-        public static Matrix GetMinChichiR1()
-        {
-            Matrix m = Matrix.Identity;
-            m.M11 = 0.838979F;
-            m.M12 = 0.000000F;
-            m.M13 = 0.092851F;
-            m.M14 = 0.000000F;
-            m.M21 = 0.014229F;
-            m.M22 = 0.991598F;
-            m.M23 = -0.128573F;
-            m.M24 = 0.000000F;
-            m.M31 = -0.050885F;
-            m.M32 = 0.060347F;
-            m.M33 = 0.459783F;
-            m.M34 = 0.000000F;
-            m.M41 = -0.040490F;
-            m.M42 = 2.234810F;
-            m.M43 = -0.433890F;
-            m.M44 = 1.000000F;
-            return m;
-        }
-
         /// 変形行列 ChichiR2 0.0
-        public static Matrix GetMinChichiR2()
-        {
-            Matrix m = Matrix.Identity;
-            m.M11 = 0.931420F;
-            m.M12 = -0.000001F;
-            m.M13 = -0.164172F;
-            m.M14 = 0.000000F;
-            m.M21 = 0.018493F;
-            m.M22 = 0.921283F;
-            m.M23 = 0.343484F;
-            m.M24 = 0.000000F;
-            m.M31 = 0.060012F;
-            m.M32 = -0.091304F;
-            m.M33 = 1.114690F;
-            m.M34 = 0.000000F;
-            m.M41 = -0.398459F;
-            m.M42 = -1.191766F;
-            m.M43 = 1.387521F;
-            m.M44 = 1.000000F;
-            m.M43 += 0.2F;
-            float scale = 1.125f;
-            m.M41 /= scale;
-            m.M42 /= scale;
-            m.M43 /= scale;
-            m *= Matrix.Scaling(scale, scale, scale);
-            return m;
-        }
-
         /// 変形行列 ChichiR3 0.0
-        public static Matrix GetMinChichiR3()
-        {
-            Matrix m = Matrix.Identity;
-            m.M11 = 0.871897F;
-            m.M12 = 0.000001F;
-            m.M13 = -0.000001F;
-            m.M14 = 0.000000F;
-            m.M21 = -0.000001F;
-            m.M22 = 0.736430F;
-            m.M23 = -0.000001F;
-            m.M24 = 0.000000F;
-            m.M31 = 0.000000F;
-            m.M32 = 0.000001F;
-            m.M33 = 1.298549F;
-            m.M34 = 0.000000F;
-            m.M41 = -0.214215F;
-            m.M42 = -0.509967F;
-            m.M43 = 0.492733F;
-            m.M44 = 1.000000F;
-            float scale = 1.0f / 1.125f;
-            m.M41 /= scale;
-            m.M42 /= scale;
-            m.M43 /= scale;
-            m *= Matrix.Scaling(scale, scale, scale);
-            return m;
-        }
-
         /// 変形行列 ChichiR4 0.0
-        public static Matrix GetMinChichiR4()
-        {
-            Matrix m = Matrix.Identity;
-            m.M11 = 1.451919F;
-            m.M12 = 0.000000F;
-            m.M13 = 0.000000F;
-            m.M14 = 0.000000F;
-            m.M21 = 0.000000F;
-            m.M22 = 1.451918F;
-            m.M23 = 0.000000F;
-            m.M24 = 0.000000F;
-            m.M31 = -0.000001F;
-            m.M32 = 0.000000F;
-            m.M33 = 1.451921F;
-            m.M34 = 0.000000F;
-            m.M41 = -0.094427F;
-            m.M42 = -0.016221F;
-            m.M43 = 0.385749F;
-            m.M44 = 1.000000F;
-            return m;
-        }
-
         /// 変形行列 ChichiR5 0.0
-        public static Matrix GetMinChichiR5()
-        {
-            Matrix m = Matrix.Identity;
-            m.M11 = 1.000000F;
-            m.M12 = 0.000000F;
-            m.M13 = 0.000001F;
-            m.M14 = 0.000000F;
-            m.M21 = 0.000000F;
-            m.M22 = 1.000001F;
-            m.M23 = 0.000001F;
-            m.M24 = 0.000000F;
-            m.M31 = 0.000000F;
-            m.M32 = 0.000000F;
-            m.M33 = 1.000001F;
-            m.M34 = 0.000000F;
-            m.M41 = -0.064099F;
-            m.M42 = 0.044692F;
-            m.M43 = 0.238179F;
-            m.M44 = 1.000000F;
-            return m;
-        }
-
         /// 変形行列 ChichiR5_end 0.0
-        public static Matrix GetMinChichiR5E()
-        {
-            Matrix m = Matrix.Identity;
-            m.M11 = 1.000000F;
-            m.M12 = 0.000000F;
-            m.M13 = -0.000001F;
-            m.M14 = 0.000000F;
-            m.M21 = 0.000001F;
-            m.M22 = 1.000000F;
-            m.M23 = -0.000001F;
-            m.M24 = 0.000000F;
-            m.M31 = 0.000001F;
-            m.M32 = 0.000000F;
-            m.M33 = 0.999999F;
-            m.M34 = 0.000000F;
-            m.M41 = 0.000009F;
-            m.M42 = 0.049918F;
-            m.M43 = 0.110920F;
-            m.M44 = 1.000000F;
-            return m;
-        }
 
+        /// 変形行列 ChichiL1 0.0 着衣
+        /// 変形行列 ChichiL2 0.0 着衣
+        /// 変形行列 ChichiL3 0.0 着衣
         /// 変形行列 ChichiL1 0.0
-        public static Matrix GetMinChichiL1()
-        {
-            Matrix m = Matrix.Identity;
-            m.M11 = 0.838980F;
-            m.M12 = 0.000000F;
-            m.M13 = -0.092846F;
-            m.M14 = 0.000000F;
-            m.M21 = -0.014228F;
-            m.M22 = 0.991598F;
-            m.M23 = -0.128574F;
-            m.M24 = 0.000000F;
-            m.M31 = 0.050883F;
-            m.M32 = 0.060347F;
-            m.M33 = 0.459783F;
-            m.M34 = 0.000000F;
-            m.M41 = 0.040490F;
-            m.M42 = 2.234810F;
-            m.M43 = -0.433890F;
-            m.M44 = 1.000000F;
-            return m;
-        }
-
         /// 変形行列 ChichiL2 0.0
-        public static Matrix GetMinChichiL2()
-        {
-            Matrix m = Matrix.Identity;
-            m.M11 = 0.931217F;
-            m.M12 = 0.000000F;
-            m.M13 = 0.164139F;
-            m.M14 = 0.000000F;
-            m.M21 = -0.018493F;
-            m.M22 = 0.921283F;
-            m.M23 = 0.343484F;
-            m.M24 = 0.000000F;
-            m.M31 = -0.060014F;
-            m.M32 = -0.091304F;
-            m.M33 = 1.114690F;
-            m.M34 = 0.000000F;
-            m.M41 = 0.398463F;
-            m.M42 = -1.191766F;
-            m.M43 = 1.387515F;
-            m.M44 = 1.000000F;
-            m.M43 += 0.2F;
-            float scale = 1.125f;
-            m.M41 /= scale;
-            m.M42 /= scale;
-            m.M43 /= scale;
-            m *= Matrix.Scaling(scale, scale, scale);
-            return m;
-        }
-
         /// 変形行列 ChichiL3 0.0
-        public static Matrix GetMinChichiL3()
-        {
-            Matrix m = Matrix.Identity;
-            m.M11 = 0.872085F;
-            m.M12 = 0.000001F;
-            m.M13 = -0.000001F;
-            m.M14 = 0.000000F;
-            m.M21 = 0.000001F;
-            m.M22 = 0.736430F;
-            m.M23 = -0.000001F;
-            m.M24 = 0.000000F;
-            m.M31 = 0.000001F;
-            m.M32 = 0.000001F;
-            m.M33 = 1.298549F;
-            m.M34 = 0.000000F;
-            m.M41 = 0.214248F;
-            m.M42 = -0.511035F;
-            m.M43 = 0.492813F;
-            m.M44 = 1.000000F;
-            float scale = 1.0f / 1.125f;
-            m.M41 /= scale;
-            m.M42 /= scale;
-            m.M43 /= scale;
-            m *= Matrix.Scaling(scale, scale, scale);
-            return m;
-        }
-
         /// 変形行列 ChichiL4 0.0
-        public static Matrix GetMinChichiL4()
-        {
-            Matrix m = Matrix.Identity;
-            m.M11 = 1.451920F;
-            m.M12 = -0.000002F;
-            m.M13 = 0.000002F;
-            m.M14 = 0.000000F;
-            m.M21 = -0.000002F;
-            m.M22 = 1.451919F;
-            m.M23 = 0.000001F;
-            m.M24 = 0.000000F;
-            m.M31 = -0.000002F;
-            m.M32 = 0.000000F;
-            m.M33 = 1.451921F;
-            m.M34 = 0.000000F;
-            m.M41 = 0.095882F;
-            m.M42 = -0.016238F;
-            m.M43 = 0.385769F;
-            m.M44 = 1.000000F;
-            return m;
-        }
-
         /// 変形行列 ChichiL5 0.0
-        public static Matrix GetMinChichiL5()
-        {
-            Matrix m = Matrix.Identity;
-            m.M11 = 1.000001F;
-            m.M12 = 0.000000F;
-            m.M13 = 0.000000F;
-            m.M14 = 0.000000F;
-            m.M21 = 0.000001F;
-            m.M22 = 1.000000F;
-            m.M23 = 0.000001F;
-            m.M24 = 0.000000F;
-            m.M31 = 0.000001F;
-            m.M32 = 0.000000F;
-            m.M33 = 1.000001F;
-            m.M34 = 0.000000F;
-            m.M41 = 0.064114F;
-            m.M42 = 0.045690F;
-            m.M43 = 0.238135F;
-            m.M44 = 1.000000F;
-            return m;
-        }
-
         /// 変形行列 ChichiL5_End 0.0
-        public static Matrix GetMinChichiL5E()
+        static readonly uint[] ChichiMinB = {
+    //ChichiMinR
+
+    //MMUL p 0019E780 p 11562878 p 0019E780 
+    0x3F56C754, 0x00000000, 0x3DBE28B8, 0x00000000,
+    0x3C69226E, 0x3F7DD95E, 0xBE03A8A4, 0x00000000,
+    0xBD506C94, 0x3D772E50, 0x3EEB68AD, 0x00000000,
+    0xBD600757, 0x40101B09, 0xBE9C753E, 0x3F800000,
+
+    //MMUL p 0019E780 p 115628B8 p 0019E780 
+    0x3F89104D, 0x00000000, 0xBE414595, 0x00000000,
+    0x3CA0F17D, 0x3F7A9175, 0x3EBAD6AA, 0x00000000,
+    0x3D75CF90, 0xBDBAFD6F, 0x3F8EAE29, 0x00000000,
+    0xBECC022A, 0xBF988BEB, 0x3FB19C39, 0x3F800000,
+
+    //MMUL p 0019E780 p 115628F8 p 0019E780 
+    0x3F422681, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x3F317375, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x3FA636E3, 0x00000000,
+    0xBE5B2357, 0xBF028F4B, 0x3EFBE76D, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B55B8 p 0019E780 
+    0x3F56C754, 0x00000000, 0x3DBE28B8, 0x00000000,
+    0x3C69226E, 0x3F7DD95E, 0xBE03A8A4, 0x00000000,
+    0xBD506C94, 0x3D772E50, 0x3EEB68AD, 0x00000000,
+    0xBD25DCEF, 0x400F0721, 0xBEDE275B, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B55F8 p 0019E780 
+    0x3F6E719B, 0x00000000, 0xBE281CF8, 0x00000000,
+    0x3C977D2A, 0x3F6BD945, 0x3EAFDD01, 0x00000000,
+    0x3D75CF90, 0xBDBAFD6F, 0x3F8EAE29, 0x00000000,
+    0xBECC022A, 0xBF988BEB, 0x3FB19C39, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B5638 p 0019E780 
+    0x3F5F3494, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x3F3C869C, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x3FA636E3, 0x00000000,
+    0xBE5B2357, 0xBF028F4B, 0x3EFBE76D, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B5678 p 0019E780 
+    0x3FB9D884, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x3FB9D884, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x3FB9D884, 0x00000000,
+    0xBDC28F6A, 0xBC8851DE, 0x3EC5844D, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B56B8 p 0019E780 
+    0x3F800000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x3F800000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x3F800000, 0x00000000,
+    0xBD831254, 0x3D39F285, 0x3E746AA1, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B56F8 p 0019E780 
+    0x3F800000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x3F800000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x3F800000, 0x00000000,
+    0x39947ADD, 0x3D4BAF96, 0x3DE1D3AA, 0x3F800000,
+
+    //ChichiMinL
+
+    //MMUL p 0019E780 p 115629F8 p 0019E780 
+    0x3F56C765, 0xA1581703, 0xBDBE265C, 0x00000000,
+    0xBC691F7E, 0x3F7DD95E, 0xBE03A8E7, 0x00000000,
+    0x3D506A10, 0x3D772E50, 0x3EEB68AD, 0x00000000,
+    0x3D6004D3, 0x40101B09, 0xBE9C751D, 0x3F800000,
+
+    //MMUL p 0019E780 p 11562A38 p 0019E780 
+    0x3F8908C4, 0x00000000, 0x3E413BE2, 0x00000000,
+    0xBCA0F289, 0x3F7A9175, 0x3EBAD6AA, 0x00000000,
+    0xBD75D13D, 0xBDBAFD6F, 0x3F8EAE29, 0x00000000,
+    0x3ECC1659, 0xBF989763, 0x3FB19360, 0x3F800000,
+
+    //MMUL p 0019E780 p 11562A78 p 0019E780 
+    0x3F423162, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x3F317375, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x3FA636E3, 0x00000000,
+    0x3E5B72C5, 0xBF0297D0, 0x3EFBF9E8, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B5738 p 0019E780 
+    0x3F56C765, 0xA1581703, 0xBDBE265C, 0x00000000,
+    0xBC691F7E, 0x3F7DD95E, 0xBE03A8E7, 0x00000000,
+    0x3D506A10, 0x3D772E50, 0x3EEB68AD, 0x00000000,
+    0x3D25DB26, 0x400F0721, 0xBEDE275B, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B5778 p 0019E780 
+    0x3F6E643D, 0x00000000, 0x3E281494, 0x00000000,
+    0xBC977E36, 0x3F6BD945, 0x3EAFDD01, 0x00000000,
+    0xBD75D13D, 0xBDBAFD6F, 0x3F8EAE29, 0x00000000,
+    0x3ECC1659, 0xBF989763, 0x3FB19360, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B57B8 p 0019E780 
+    0x3F5F4107, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x3F3C869C, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x3FA636E3, 0x00000000,
+    0x3E5B72C5, 0xBF0297D0, 0x3EFBF9E8, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B57F8 p 0019E780 
+    0x3FB9D884, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x3FB9D884, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x3FB9D884, 0x00000000,
+    0x3DC2F0EE, 0xBC8855A4, 0x3EC5844D, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B5838 p 0019E780 
+    0x3F800000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x3F800000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x3F800000, 0x00000000,
+    0x3D83E491, 0x3D39F1E4, 0x3E746AA1, 0x3F800000,
+
+    //MMUL p 0019E780 p 113B5878 p 0019E780 
+    0x3F800000, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x3F800000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x3F800000, 0x00000000,
+    0xB994445F, 0x3D4BAF96, 0x3DE1D324, 0x3F800000
+};
+
+        static float[] ChichiMinF;
+
+        static void GetChichiMinM(ref Matrix m, int off)
         {
-            Matrix m = Matrix.Identity;
-            m.M11 = 0.999999F;
-            m.M12 = 0.000000F;
-            m.M13 = 0.000001F;
-            m.M14 = 0.000000F;
-            m.M21 = -0.000001F;
-            m.M22 = 0.999999F;
-            m.M23 = 0.000000F;
-            m.M24 = 0.000000F;
-            m.M31 = -0.000001F;
-            m.M32 = 0.000000F;
-            m.M33 = 1.000000F;
-            m.M34 = 0.000000F;
-            m.M41 = 0.000006F;
-            m.M42 = 0.049874F;
-            m.M43 = 0.109921F;
-            m.M44 = 1.000000F;
-            return m;
+            m.M11 = ChichiMinF[off + 0];
+            m.M12 = ChichiMinF[off + 1];
+            m.M13 = ChichiMinF[off + 2];
+            m.M14 = ChichiMinF[off + 3];
+
+            m.M21 = ChichiMinF[off + 4];
+            m.M22 = ChichiMinF[off + 5];
+            m.M23 = ChichiMinF[off + 6];
+            m.M24 = ChichiMinF[off + 7];
+
+            m.M31 = ChichiMinF[off + 8];
+            m.M32 = ChichiMinF[off + 9];
+            m.M33 = ChichiMinF[off + 10];
+            m.M34 = ChichiMinF[off + 11];
+
+            m.M41 = ChichiMinF[off + 12];
+            m.M42 = ChichiMinF[off + 13];
+            m.M43 = ChichiMinF[off + 14];
+            m.M44 = ChichiMinF[off + 15];
         }
 
-        /// おっぱいスライダ0.225でのscaling factor
+        /// おっぱいスライダoppai_flat_rateでのscaling factor
         public static Vector3 GetMinChichi()
         {
             return new Vector3(0.8350f, 0.8240f, 0.7800f);
+        }
+
+        /// おっぱいスライダ0.5でのscaling factor
+        public static Vector3 GetMidChichi()
+        {
+            return new Vector3(1.0f, 1.0f, 1.0f);
         }
 
         /// おっぱいスライダ1.0でのscaling factor
@@ -446,48 +189,83 @@ namespace TDCG
             return new Vector3(1.2500f, 1.3000f, 1.1800f);
         }
 
-        /// たれ目つり目スライダ0.0での変形
-        public static Matrix GetMinEyeR()
+        // MinEyeL
+        // MinEyeR
+        // MaxEyeL
+        // MaxEyeR
+        static readonly uint[] EyeB = {
+    //MMUL p 0019E660 p 0EE6DD18 p 0019E660 
+    0x3F72D955, 0x3E1F6AE8, 0x3D1D7265, 0x00000000,
+    0xBE1CD5C7, 0x3F7375E2, 0xBC24CBDD, 0x00000000,
+    0xBD092242, 0x3CBBCB71, 0x3F7F1C44, 0x00000000,
+    0xBB7DA800, 0x3DF0241C, 0x3CBA53BF, 0x3F800000,
+
+    //MMUL p 0019E660 p 0EE6DD58 p 0019E660 
+    0x3F72D949, 0xBE1F6A62, 0xBD1D72EC, 0x00000000,
+    0x3E1CD540, 0x3F7375D9, 0xBC2C1643, 0x00000000,
+    0x3D092285, 0x3CBBCC55, 0x3F7F1C3F, 0x00000000,
+    0x3B7C4B00, 0x3DF01978, 0x3CBB51F8, 0x3F800000,
+
+    //MMUL p 0019E660 p 0EE51BB0 p 0019E660 
+    0x3F70F58B, 0xBE756B14, 0x3E141177, 0x00000000,
+    0x3E7EB7D2, 0x3F73289C, 0xBD1779FC, 0x00000000,
+    0xBE013C05, 0x3DA39804, 0x3F7CCCA8, 0x00000000,
+    0xBE27D290, 0xBD6064A0, 0x3DAF2864, 0x3F800000,
+
+    //MMUL p 0019E660 p 0EE51BF0 p 0019E660 
+    0x3F70F55E, 0x3E756CF8, 0xBE1411F1, 0x00000000,
+    0xBE7EB9B6, 0x3F73287E, 0xBD17B7ED, 0x00000000,
+    0x3E013C41, 0x3DA398D2, 0x3F7CCC99, 0x00000000,
+    0x3E27BF04, 0xBD60B158, 0x3DAF312C, 0x3F800000,
+};
+
+        static float[] EyeF;
+
+        static void GetEyeM(ref Matrix m, int off)
         {
-            Matrix m = Matrix.Identity;
-            m.M11 = 1.04776F; m.M12 = -0.165705F; m.M13 = -0.042457F; m.M14 = 0;
-            m.M21 = 0.169162F; m.M22 = 1.012264F; m.M23 = -0.011601F; m.M24 = 0;
-            m.M31 = 0.036979F; m.M32 = 0.024401F; m.M33 = 1.100661F; m.M34 = 0;
-            m.M41 = 0.004252F; m.M42 = 0.124786F; m.M43 = 0.025256F; m.M44 = 1;
-            return m;
+            m.M11 = EyeF[off + 0];
+            m.M12 = EyeF[off + 1];
+            m.M13 = EyeF[off + 2];
+            m.M14 = EyeF[off + 3];
+
+            m.M21 = EyeF[off + 4];
+            m.M22 = EyeF[off + 5];
+            m.M23 = EyeF[off + 6];
+            m.M24 = EyeF[off + 7];
+
+            m.M31 = EyeF[off + 8];
+            m.M32 = EyeF[off + 9];
+            m.M33 = EyeF[off + 10];
+            m.M34 = EyeF[off + 11];
+
+            m.M41 = EyeF[off + 12];
+            m.M42 = EyeF[off + 13];
+            m.M43 = EyeF[off + 14];
+            m.M44 = EyeF[off + 15];
+        }
+
+        /// たれ目つり目スライダ0.0での変形
+        public static void GetMinEyeR(ref Matrix m)
+        {
+            GetEyeM(ref m, 1 * 16);
         }
 
         /// たれ目つり目スライダ1.0での変形
-        public static Matrix GetMaxEyeR()
+        public static void GetMaxEyeR(ref Matrix m)
         {
-            Matrix m = Matrix.Identity;
-            m.M11 = 1.039604F; m.M12 = 0.255108F; m.M13 = -0.15971F; m.M14 = 0;
-            m.M21 = -0.27475F; m.M22 = 1.011007F; m.M23 = -0.040911F; m.M24 = 0;
-            m.M31 = 0.139395F; m.M32 = 0.085025F; m.M33 = 1.090691F; m.M34 = 0;
-            m.M41 = 0.180933F; m.M42 = -0.058389F; m.M43 = 0.094482F; m.M44 = 1;
-            return m;
+            GetEyeM(ref m, 3 * 16);
         }
 
         /// たれ目つり目スライダ0.0での変形
-        public static Matrix GetMinEyeL()
+        public static void GetMinEyeL(ref Matrix m)
         {
-            Matrix m = Matrix.Identity;
-            m.M11 = 1.04776F; m.M12 = 0.165707F; m.M13 = 0.042456F; m.M14 = 0;
-            m.M21 = -0.169164F; m.M22 = 1.012264F; m.M23 = -0.01111F; m.M24 = 0;
-            m.M31 = -0.036979F; m.M32 = 0.0244F; m.M33 = 1.100662F; m.M34 = 0;
-            m.M41 = -0.004275F; m.M42 = 0.124808F; m.M43 = 0.025122F; m.M44 = 1;
-            return m;
+            GetEyeM(ref m, 0 * 16);
         }
 
         /// たれ目つり目スライダ1.0での変形
-        public static Matrix GetMaxEyeL()
+        public static void GetMaxEyeL(ref Matrix m)
         {
-            Matrix m = Matrix.Identity;
-            m.M11 = 1.039607F; m.M12 = -0.255101F; m.M13 = 0.159708F; m.M14 = 0;
-            m.M21 = 0.274743F; m.M22 = 1.01101F; m.M23 = -0.040846F; m.M24 = 0;
-            m.M31 = -0.139394F; m.M32 = 0.085025F; m.M33 = 1.090691F; m.M34 = 0;
-            m.M41 = -0.181016F; m.M42 = -0.058312F; m.M43 = 0.094464F; m.M44 = 1;
-            return m;
+            GetEyeM(ref m, 2 * 16);
         }
 
         /// 指定割合に比例するscaling factorを得ます。
@@ -499,14 +277,12 @@ namespace TDCG
         /// 指定割合に比例する変形行列を得ます。
         public static Matrix GetMatrixRate(Vector3 min, Vector3 max, float rate)
         {
-            return Matrix.Scaling(GetVector3Rate(min, max, rate));
+            return Matrix.Scaling(Vector3.Lerp(min, max, rate));
         }
 
         /// 指定割合に比例する変形行列を得ます。
-        public static Matrix GetMatrixRate(Matrix min, Matrix max, float rate)
+        public static void GetMatrixRate(out Matrix m, ref Matrix min, ref Matrix max, float rate)
         {
-            Matrix m;
-
             m.M11 = Helper.Lerp(min.M11, max.M11, rate);
             m.M12 = Helper.Lerp(min.M12, max.M12, rate);
             m.M13 = Helper.Lerp(min.M13, max.M13, rate);
@@ -526,16 +302,31 @@ namespace TDCG
             m.M42 = Helper.Lerp(min.M42, max.M42, rate);
             m.M43 = Helper.Lerp(min.M43, max.M43, rate);
             m.M44 = Helper.Lerp(min.M44, max.M44, rate);
+        }
 
+        /// 指定割合に比例する変形行列を得ます。
+        public static Matrix GetMatrixRate(Matrix min, Matrix max, float rate)
+        {
+            Matrix m;
+            GetMatrixRate(out m, ref min, ref max, rate);
             return m;
         }
 
-        /// face_oyaの変形行列
-        public static Matrix FaceOyaDefault;
-
         static SliderMatrix()
         {
-            FaceOyaDefault = Matrix.Scaling(1.1045F, 1.064401F, 1.1045F);
+            ChichiMinF = new float[ChichiMinB.Length];
+            for (int i = 0; i < ChichiMinB.Length; i++)
+            {
+                byte[] bytes = BitConverter.GetBytes(ChichiMinB[i]);
+                ChichiMinF[i] = BitConverter.ToSingle(bytes, 0);
+            }
+
+            EyeF = new float[EyeB.Length];
+            for (int i = 0; i < EyeB.Length; i++)
+            {
+                byte[] bytes = BitConverter.GetBytes(EyeB[i]);
+                EyeF[i] = BitConverter.ToSingle(bytes, 0);
+            }
         }
 
         /// 拡大変位
@@ -589,8 +380,8 @@ namespace TDCG
             set
             {
                 arm_rate = value;
-                ArmDummy = GetVector3Rate(GetMinArmDummy(), GetMaxArmDummy(), arm_rate);
-                Arm = GetVector3Rate(GetMinArm(), GetMaxArm(), arm_rate);
+                ArmDummy = Vector3.Lerp(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 1.1760f, 1.0f), arm_rate);
+                Arm = Vector3.Lerp(new Vector3(1.0f, 0.7350f, 1.0f), new Vector3(1.0f, 1.1760f, 1.0f), arm_rate);
             }
         }
 
@@ -602,10 +393,10 @@ namespace TDCG
             set
             {
                 leg_rate = value;
-                HipsDummy = GetVector3Rate(GetMinHipsDummy(), GetMaxHipsDummy(), leg_rate);
-                UpLeg = GetVector3Rate(GetMinUpLeg(), GetMaxUpLeg(), leg_rate);
-                UpLegRoll = GetVector3Rate(GetMinUpLegRoll(), GetMaxUpLegRoll(), leg_rate);
-                LegRoll = GetVector3Rate(GetMinLegRoll(), GetMaxLegRoll(), leg_rate);
+                HipsDummy = Vector3.Lerp(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.2001f, 1.0f, 1.0f), leg_rate);
+                UpLeg = Vector3.Lerp(new Vector3(0.8091f, 1.0f, 0.8190f), new Vector3(1.2001f, 1.0f, 1.0f), leg_rate);
+                UpLegRoll = Vector3.Lerp(new Vector3(0.8091f, 1.0f, 0.8190f), new Vector3(1.2012f, 1.0f, 1.0f), leg_rate);
+                LegRoll = Vector3.Lerp(new Vector3(0.8091f, 1.0f, 0.8190f), new Vector3(0.9878f, 1.0f, 1.0f), leg_rate);
             }
         }
 
@@ -617,8 +408,8 @@ namespace TDCG
             set
             {
                 waist_rate = value;
-                SpineDummy = GetVector3Rate(GetMinSpineDummy(), GetMaxSpineDummy(), waist_rate);
-                Spine1 = GetVector3Rate(GetMinSpine1(), GetMaxSpine1(), waist_rate);
+                SpineDummy = Vector3.Lerp(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0890f, 1.0f, 0.9230f), waist_rate);
+                Spine1 = Vector3.Lerp(new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.1800f, 1.0f, 1.0f), waist_rate);
             }
         }
 
@@ -633,24 +424,26 @@ namespace TDCG
 
                 if (Flat())
                 {
-                    float rate = oppai_rate / oppai_flat_rate;
-                    float scale = 1.0f;
-
-                    Chichi = GetVector3Rate(new Vector3(scale, scale, scale), GetMinChichi(), rate);
+                    Chichi = GetMinChichi();
                 }
                 else
-                    Chichi = GetVector3Rate(GetMinChichi(), GetMaxChichi(), (oppai_rate - oppai_flat_rate) / (1.0f - oppai_flat_rate));
+                {
+                    if (oppai_rate < 0.5f)
+                        Chichi = Vector3.Lerp(GetMinChichi(), GetMidChichi(), (oppai_rate - oppai_flat_rate) / (0.5f - oppai_flat_rate));
+                    else
+                        Chichi = Vector3.Lerp(GetMidChichi(), GetMaxChichi(), (oppai_rate - 0.5f) / (1.0f - 0.5f));
+                }
             }
         }
 
+        /// 貧乳境界割合
+        static float oppai_flat_rate = 0.20f; // 0.2250f ?
+
         /// 貧乳であるか
-        public bool Flat()
+        bool Flat()
         {
             return oppai_rate < oppai_flat_rate;
         }
-
-        /// 貧乳境界割合
-        public static float oppai_flat_rate = 0.2250F;
 
         float age_rate;
         /// 姉妹スライダ割合
@@ -660,8 +453,23 @@ namespace TDCG
             set
             {
                 age_rate = value;
-                Local = GetVector3Rate(GetMinLocal(), GetMaxLocal(), age_rate);
-                FaceOya = GetVector3Rate(GetMinFaceOya(), GetMaxFaceOya(), age_rate);
+                // linear
+                {
+                    float scale = Helper.Lerp(0.9520f, 1.0480f, age_rate);
+                    Local = new Vector3(scale, scale, scale);
+                }
+                // linear
+                {
+                    float scale = Helper.Lerp(1.2860f, 0.9230f, age_rate);
+                    FaceOya.X = scale;
+                    FaceOya.Z = scale;
+                }
+                // linear ?
+                {
+                    float scale_1 = Helper.Lerp(1.2660f, 0.9230f, age_rate);
+                    float scale_2 = Helper.Lerp(0.8850f, 1.0600f, age_rate);
+                    FaceOya.Y = scale_1 * scale_2;
+                }
             }
         }
 
@@ -673,106 +481,96 @@ namespace TDCG
             set
             {
                 eye_rate = value;
-                EyeR = GetMatrixRate(GetMinEyeR(), GetMaxEyeR(), eye_rate) * Matrix.Invert(FaceOyaDefault);
-                EyeL = GetMatrixRate(GetMinEyeL(), GetMaxEyeL(), eye_rate) * Matrix.Invert(FaceOyaDefault);
+
+                Matrix minEyeR = Matrix.Identity;
+                Matrix maxEyeR = Matrix.Identity;
+                Matrix minEyeL = Matrix.Identity;
+                Matrix maxEyeL = Matrix.Identity;
+
+                GetMaxEyeR(ref maxEyeR);
+                GetMinEyeR(ref minEyeR);
+                GetMaxEyeL(ref maxEyeL);
+                GetMinEyeL(ref minEyeL);
+
+                GetMatrixRate(out EyeR, ref minEyeR, ref maxEyeR, eye_rate);
+                GetMatrixRate(out EyeL, ref minEyeL, ref maxEyeL, eye_rate);
             }
         }
 
-        void Scale1(ref Matrix m, Vector3 scaling)
-        {
-            m.M11 *= scaling.X;
-            m.M12 *= scaling.X;
-            m.M13 *= scaling.X;
-            m.M21 *= scaling.Y;
-            m.M22 *= scaling.Y;
-            m.M23 *= scaling.Y;
-            m.M31 *= scaling.Z;
-            m.M32 *= scaling.Z;
-            m.M33 *= scaling.Z;
-        }
+        static readonly Dictionary<string, int> MinChichiClothedMap = new Dictionary<string, int>() {
+        {"Chichi_Right1", 0 * 16},
+        {"Chichi_Right2", 1 * 16},
+        {"Chichi_Right3", 2 * 16},
+        {"Chichi_Right4", 6 * 16},
+        {"Chichi_Right5", 7 * 16},
+        {"Chichi_Right5_end", 8 * 16},
+        {"Chichi_Left1", (0+9) * 16},
+        {"Chichi_Left2", (1+9) * 16},
+        {"Chichi_Left3", (2+9) * 16},
+        {"Chichi_Left4", (6+9) * 16},
+        {"Chichi_Left5", (7+9) * 16},
+        {"Chichi_Left5_End", (8+9) * 16}
+    };
 
-        void Scale1(ref Matrix m, Matrix scaling)
-        {
-            m.M11 *= scaling.M11;
-            m.M12 *= scaling.M11;
-            m.M13 *= scaling.M11;
-            m.M21 *= scaling.M22;
-            m.M22 *= scaling.M22;
-            m.M23 *= scaling.M22;
-            m.M31 *= scaling.M33;
-            m.M32 *= scaling.M33;
-            m.M33 *= scaling.M33;
-        }
+        static readonly Dictionary<string, int> MinChichiMap = new Dictionary<string, int>() {
+        {"Chichi_Right1", 3 * 16},
+        {"Chichi_Right2", 4 * 16},
+        {"Chichi_Right3", 5 * 16},
+        {"Chichi_Right4", 6 * 16},
+        {"Chichi_Right5", 7 * 16},
+        {"Chichi_Right5_end", 8 * 16},
+        {"Chichi_Left1", (3+9) * 16},
+        {"Chichi_Left2", (4+9) * 16},
+        {"Chichi_Left3", (5+9) * 16},
+        {"Chichi_Left4", (6+9) * 16},
+        {"Chichi_Left5", (7+9) * 16},
+        {"Chichi_Left5_End", (8+9) * 16}
+    };
+
+        /// 着衣扱いか
+        public bool Clothed = false;
 
         /// おっぱい変形：貧乳を行います。
-        public void TransformChichiFlat(TMONode tmo_node, ref Matrix m)
+        void TransformChichiFlat(string name, ref Matrix m)
         {
-            float rate = oppai_rate / oppai_flat_rate;
-
-            switch (tmo_node.Name)
+            Dictionary<string, int> min_chichi_map;
+            if (Clothed)
+                min_chichi_map = MinChichiClothedMap;
+            else
+                min_chichi_map = MinChichiMap;
+            Matrix c = Matrix.Identity;
             {
-                case "Chichi_Right1":
-                    m = GetMatrixRate(GetMinChichiR1(), m, rate);
-                    break;
-                case "Chichi_Right2":
-                    m = GetMatrixRate(GetMinChichiR2(), m, rate);
-                    break;
-                case "Chichi_Right3":
-                    m = GetMatrixRate(GetMinChichiR3(), m, rate);
-                    break;
-                case "Chichi_Right4":
-                    m = GetMatrixRate(GetMinChichiR4(), m, rate);
-                    break;
-                case "Chichi_Right5":
-                    m = GetMatrixRate(GetMinChichiR5(), m, rate);
-                    break;
-                case "Chichi_Right5_end":
-                    m = GetMatrixRate(GetMinChichiR5E(), m, rate);
-                    break;
-                case "Chichi_Left1":
-                    m = GetMatrixRate(GetMinChichiL1(), m, rate);
-                    break;
-                case "Chichi_Left2":
-                    m = GetMatrixRate(GetMinChichiL2(), m, rate);
-                    break;
-                case "Chichi_Left3":
-                    m = GetMatrixRate(GetMinChichiL3(), m, rate);
-                    break;
-                case "Chichi_Left4":
-                    m = GetMatrixRate(GetMinChichiL4(), m, rate);
-                    break;
-                case "Chichi_Left5":
-                    m = GetMatrixRate(GetMinChichiL5(), m, rate);
-                    break;
-                case "Chichi_Left5_End":
-                    m = GetMatrixRate(GetMinChichiL5E(), m, rate);
-                    break;
+                int off;
+                if (min_chichi_map.TryGetValue(name, out off))
+                    GetChichiMinM(ref c, off);
             }
+            GetMatrixRate(out m, ref c, ref m, oppai_rate / oppai_flat_rate);
+        }
 
-            // translationを維持する必要があるため
-            // translationに対してscalingを打ち消す演算を行う。
-            Vector3 scaling = this.Chichi;
-
-            m.M41 /= scaling.X;
-            m.M42 /= scaling.Y;
-            m.M43 /= scaling.Z;
-
-            switch (tmo_node.Name)
+        /// おっぱい変形を行います。
+        void ScaleChichi(string name, ref Matrix m)
+        {
+            switch (name)
             {
                 case "Chichi_Right1":
                 case "Chichi_Left1":
-                    m *= Matrix.Scaling(scaling);
+                    Helper.Scale1(ref m, this.Chichi);
+                    break;
+                default:
+                    m.M41 /= this.Chichi.X;
+                    m.M42 /= this.Chichi.Y;
+                    m.M43 /= this.Chichi.Z;
                     break;
             }
         }
 
         /// 表情変形を行います。
-        public void TransformFace(TMONode tmo_node, ref Matrix m)
+        public void TransformFace(string name, ref Matrix m)
         {
-            switch (tmo_node.Name)
+            switch (name)
             {
                 case "face_oya":
-                    Scale1(ref m, this.FaceOya);
+                    Helper.Scale1(ref m, this.FaceOya);
                     break;
                 case "eyeline_sita_L":
                 case "L_eyeline_oya_L":
@@ -784,36 +582,35 @@ namespace TDCG
                 case "Me_Left_Futi":
                     m *= this.EyeL;
                     break;
-
             }
         }
 
         /// 体型変形を行います。
-        public void Scale(TMONode tmo_node, ref Matrix m)
+        public void Scale(string name, ref Matrix m)
         {
-            switch (tmo_node.Name)
+            switch (name)
             {
                 case "W_Spine_Dummy":
-                    Scale1(ref m, this.SpineDummy);
+                    Helper.Scale1(ref m, this.SpineDummy);
                     break;
                 case "W_Spine1":
                 case "W_Spine2":
-                    Scale1(ref m, this.Spine1);
+                    Helper.Scale1(ref m, this.Spine1);
                     break;
 
                 case "W_LeftHips_Dummy":
                 case "W_RightHips_Dummy":
-                    Scale1(ref m, this.HipsDummy);
+                    Helper.Scale1(ref m, this.HipsDummy);
                     break;
                 case "W_LeftUpLeg":
                 case "W_RightUpLeg":
-                    Scale1(ref m, this.UpLeg);
+                    Helper.Scale1(ref m, this.UpLeg);
                     break;
                 case "W_LeftUpLegRoll":
                 case "W_RightUpLegRoll":
                 case "W_LeftLeg":
                 case "W_RightLeg":
-                    Scale1(ref m, this.UpLegRoll);
+                    Helper.Scale1(ref m, this.UpLegRoll);
                     break;
                 case "W_LeftLegRoll":
                 case "W_RightLegRoll":
@@ -821,12 +618,12 @@ namespace TDCG
                 case "W_RightFoot":
                 case "W_LeftToeBase":
                 case "W_RightToeBase":
-                    Scale1(ref m, this.LegRoll);
+                    Helper.Scale1(ref m, this.LegRoll);
                     break;
 
                 case "W_LeftArm_Dummy":
                 case "W_RightArm_Dummy":
-                    Scale1(ref m, this.ArmDummy);
+                    Helper.Scale1(ref m, this.ArmDummy);
                     break;
                 case "W_LeftArm":
                 case "W_RightArm":
@@ -836,15 +633,39 @@ namespace TDCG
                 case "W_RightForeArm":
                 case "W_LeftForeArmRoll":
                 case "W_RightForeArmRoll":
-                    Scale1(ref m, this.Arm);
+                    Helper.Scale1(ref m, this.Arm);
                     break;
             }
         }
 
-        /// おっぱい変形を行います。
-        public void ScaleChichi(ref Matrix m)
+        static Regex re_chichi = new Regex(@"\AChichi");
+
+        /// 体型変形を行います。
+        /// ここで変形した行列は MatrixStack に入ります。
+        public void Transform(string name, ref Matrix m)
         {
-            Scale1(ref m, this.Chichi);
+            bool chichi_p = re_chichi.IsMatch(name);
+
+            if (chichi_p)
+            {
+                ScaleChichi(name, ref m);
+
+                if (Flat())
+                {
+                    TransformChichiFlat(name, ref m);
+                }
+            }
+            else
+                TransformFace(name, ref m);
+        }
+        /// 体型変形を行います。
+        /// ここで変形した行列は MatrixStack に入りません。
+        public void TransformWithoutStack(string name, ref Matrix m)
+        {
+            bool chichi_p = re_chichi.IsMatch(name);
+
+            if (!chichi_p)
+                Scale(name, ref m);
         }
     }
 }

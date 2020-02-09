@@ -264,13 +264,8 @@ namespace TDCG
 
             if (tmo.w_hips_node != null)
             {
-                //姉妹スライダによる変形
-                Matrix local = Matrix.Scaling(slider_matrix.Local);
-
                 //移動変位を設定
-                local.M41 = translation.X;
-                local.M42 = translation.Y;
-                local.M43 = translation.Z;
+                Matrix local = Matrix.Translation(translation);
 
                 matrixStack.Push(local);
                 UpdateBoneMatrices(tmo.w_hips_node, tmo_frame);
@@ -281,7 +276,7 @@ namespace TDCG
                 Matrix local = Matrix.Translation(translation);
 
                 matrixStack.Push(local);
-                UpdateBoneMatricesWithoutSlideMatrices(tmo_node, tmo_frame);
+                UpdateBoneMatricesWithoutSlider(tmo_node, tmo_frame);
             }
         }
 
@@ -299,30 +294,22 @@ namespace TDCG
             }
             Matrix m = tmo_node.TransformationMatrix;
 
-            bool chichi_p = re_chichi.IsMatch(tmo_node.Name);
-
-            if (chichi_p)
+            if (slider_matrix != null)
             {
-                if (slider_matrix.Flat())
-                    slider_matrix.TransformChichiFlat(tmo_node, ref m);
+                string name = tmo_node.Name;
+
+                slider_matrix.Transform(name, ref m);
+
+                matrixStack.Push(m * matrixStack.Peek());
+                m = matrixStack.Peek();
+
+                slider_matrix.TransformWithoutStack(name, ref m);
             }
             else
-                // todo: face_p
-                slider_matrix.TransformFace(tmo_node, ref m);
-
-            matrixStack.Push(m * matrixStack.Peek());
-            m = matrixStack.Peek();
-
-            if (chichi_p)
             {
-                if (!slider_matrix.Flat())
-                {
-                    slider_matrix.ScaleChichi(ref m);
-                }
+                matrixStack.Push(m * matrixStack.Peek());
+                m = matrixStack.Peek();
             }
-            else
-                // todo: scale1map
-                slider_matrix.Scale(tmo_node, ref m);
 
             tmo_node.combined_matrix = m;
 
@@ -335,7 +322,7 @@ namespace TDCG
         /// <summary>
         /// bone行列を更新します（体型変更なし）。
         /// </summary>
-        protected void UpdateBoneMatricesWithoutSlideMatrices(TMONode tmo_node, TMOFrame tmo_frame)
+        protected void UpdateBoneMatricesWithoutSlider(TMONode tmo_node, TMOFrame tmo_frame)
         {
             //matrixStack.Push();
 
