@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -15,12 +16,22 @@ namespace TDCG
     /// <summary>
     /// フィギュアを管理します。
     /// </summary>
-    public class FigureCollection : IDisposable
+    public class FigureCollection : IDisposable, IEnumerable<Figure>
     {
         /// <summary>
         /// フィギュアリスト
         /// </summary>
-        public List<Figure> FigureList = new List<Figure>();
+        List<Figure> FigureList = new List<Figure>();
+
+        public IEnumerator<Figure> GetEnumerator()
+        {
+            return ((IEnumerable<Figure>)FigureList).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<Figure>)FigureList).GetEnumerator();
+        }
 
         /// <summary>
         /// 要素数
@@ -35,17 +46,7 @@ namespace TDCG
         /// <summary>
         /// カメラ
         /// </summary>
-        public SimpleCamera Camera
-        {
-            get
-            {
-                return camera;
-            }
-            set
-            {
-                camera = value;
-            }
-        }
+        public SimpleCamera Camera { get { return camera; } set { camera = value; } }
 
         /// TSOファイルをdevice上で開くときに呼ばれるdelegate型
         public delegate void TSOFileOpenHandler(TSOFile tso);

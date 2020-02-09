@@ -200,17 +200,7 @@ namespace TDCG.Editor
         /// <summary>
         /// カメラ
         /// </summary>
-        public SimpleCamera Camera
-        {
-            get
-            {
-                return camera;
-            }
-            set
-            {
-                camera = value;
-            }
-        }
+        public SimpleCamera Camera { get { return camera; } set { camera = value; } }
 
         /// <summary>
         /// world行列
@@ -565,7 +555,7 @@ namespace TDCG.Editor
         /// </summary>
         protected virtual void DrawFigure()
         {
-            foreach (Figure fig in figures.FigureList)
+            foreach (Figure fig in figures)
             {
                 DrawFigure(fig);
             }
