@@ -523,7 +523,6 @@ namespace TDCG.Editor
             ctx.ClearDepthStencilView(ztex_view, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
             ctx.ClearRenderTargetView(buf0_view, ScreenColor);
 
-            UpdateTransform();
             UVSCR_variable.Set(UVSCR());
 
             DrawFigure();
@@ -534,12 +533,12 @@ namespace TDCG.Editor
             swap_chain.Present(1, SharpDX.DXGI.PresentFlags.None);
         }
 
-        void UpdateTransform()
+        void UpdateTransform(ref Matrix world)
         {
-            Matrix world_view_matrix = world_matrix * Transform_View;
+            Matrix world_view_matrix = world * Transform_View;
             world_view_projection_matrix = world_view_matrix * Transform_Projection;
 
-            World_variable.SetMatrix(world_matrix);
+            World_variable.SetMatrix(world);
             WorldView_variable.SetMatrix(world_view_matrix);
             WorldViewProjection_variable.SetMatrix(world_view_projection_matrix);
             /* for normal in view */
@@ -572,8 +571,24 @@ namespace TDCG.Editor
             }
         }
 
+        static void Dump(ref Matrix m)
+        {
+                Console.WriteLine("{0:F4} {1:F4} {2:F4} {3:F4}", m.M11, m.M12, m.M13, m.M14);
+                Console.WriteLine("{0:F4} {1:F4} {2:F4} {3:F4}", m.M21, m.M22, m.M23, m.M24);
+                Console.WriteLine("{0:F4} {1:F4} {2:F4} {3:F4}", m.M31, m.M32, m.M33, m.M34);
+                Console.WriteLine("{0:F4} {1:F4} {2:F4} {3:F4}", m.M41, m.M42, m.M43, m.M44);
+        }
+
         void DrawFigure(Figure fig)
         {
+            {
+                Matrix world;
+                fig.GetWorldMatrix(out world);
+
+                Console.WriteLine("-- dump world");
+                Dump(ref world);
+                UpdateTransform(ref world);
+            }
             LightDirForced_variable.Set(fig.LightDirForced);
             foreach (TSOFile tso in fig.TSOFileList)
             {

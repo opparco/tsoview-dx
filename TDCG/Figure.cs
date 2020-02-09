@@ -383,6 +383,20 @@ namespace TDCG
         }
 
         /// <summary>
+        /// 姉妹スライダを基にワールド行列を得ます。
+        /// </summary>
+        public void GetWorldMatrix(out Matrix m)
+        {
+            m = Matrix.Identity;
+
+            if (slider_matrix != null)
+            {
+                //姉妹スライダによる変形
+                m = Matrix.Scaling(slider_matrix.Local);
+            }
+        }
+
+        /// <summary>
         /// 光源方向ベクトルを得ます。
         /// </summary>
         /// <returns></returns>
