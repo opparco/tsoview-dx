@@ -58,12 +58,12 @@ public partial class FigureForm : Form
     {
         this.fig = fig;
 
-        this.tbSlideArm.Value = (int)(fig.slider_matrix.ArmRate * (float)tbSlideArm.Maximum);
-        this.tbSlideLeg.Value = (int)(fig.slider_matrix.LegRate * (float)tbSlideLeg.Maximum);
-        this.tbSlideWaist.Value = (int)(fig.slider_matrix.WaistRate * (float)tbSlideWaist.Maximum);
-        this.tbSlideOppai.Value = (int)(fig.slider_matrix.OppaiRate * (float)tbSlideOppai.Maximum);
-        this.tbSlideAge.Value = (int)(fig.slider_matrix.AgeRate * (float)tbSlideAge.Maximum);
-        this.tbSlideEye.Value = (int)(fig.slider_matrix.EyeRate * (float)tbSlideEye.Maximum);
+        this.tbSlideArm.Value = (int)(fig.slider_matrix.ArmRatio * (float)tbSlideArm.Maximum);
+        this.tbSlideLeg.Value = (int)(fig.slider_matrix.LegRatio * (float)tbSlideLeg.Maximum);
+        this.tbSlideWaist.Value = (int)(fig.slider_matrix.WaistRatio * (float)tbSlideWaist.Maximum);
+        this.tbSlideOppai.Value = (int)(fig.slider_matrix.OppaiRatio * (float)tbSlideOppai.Maximum);
+        this.tbSlideAge.Value = (int)(fig.slider_matrix.AgeRatio * (float)tbSlideAge.Maximum);
+        this.tbSlideEye.Value = (int)(fig.slider_matrix.EyeRatio * (float)tbSlideEye.Maximum);
 
         lvTSOFiles.Items.Clear();
         for (int i = 0; i < fig.TSOFileList.Count; i++)
@@ -191,7 +191,7 @@ public partial class FigureForm : Form
         if (fig == null)
             return;
 
-        fig.slider_matrix.ArmRate = tbSlideArm.Value / (float)tbSlideArm.Maximum;
+        fig.slider_matrix.ArmRatio = tbSlideArm.Value / (float)tbSlideArm.Maximum;
         fig.UpdateBoneMatrices(true);
     }
 
@@ -200,7 +200,7 @@ public partial class FigureForm : Form
         if (fig == null)
             return;
 
-        fig.slider_matrix.LegRate = tbSlideLeg.Value / (float)tbSlideLeg.Maximum;
+        fig.slider_matrix.LegRatio = tbSlideLeg.Value / (float)tbSlideLeg.Maximum;
         fig.UpdateBoneMatrices(true);
     }
 
@@ -209,7 +209,7 @@ public partial class FigureForm : Form
         if (fig == null)
             return;
 
-        fig.slider_matrix.WaistRate = tbSlideWaist.Value / (float)tbSlideWaist.Maximum;
+        fig.slider_matrix.WaistRatio = tbSlideWaist.Value / (float)tbSlideWaist.Maximum;
         fig.UpdateBoneMatrices(true);
     }
 
@@ -218,7 +218,7 @@ public partial class FigureForm : Form
         if (fig == null)
             return;
 
-        fig.slider_matrix.OppaiRate = tbSlideOppai.Value / (float)tbSlideOppai.Maximum;
+        fig.slider_matrix.OppaiRatio = tbSlideOppai.Value / (float)tbSlideOppai.Maximum;
         fig.UpdateBoneMatrices(true);
     }
 
@@ -227,7 +227,7 @@ public partial class FigureForm : Form
         if (fig == null)
             return;
 
-        fig.slider_matrix.AgeRate = tbSlideAge.Value / (float)tbSlideAge.Maximum;
+        fig.slider_matrix.AgeRatio = tbSlideAge.Value / (float)tbSlideAge.Maximum;
         fig.UpdateBoneMatrices(true);
     }
 
@@ -236,7 +236,7 @@ public partial class FigureForm : Form
         if (fig == null)
             return;
 
-        fig.slider_matrix.EyeRate = tbSlideEye.Value / (float)tbSlideEye.Maximum;
+        fig.slider_matrix.EyeRatio = tbSlideEye.Value / (float)tbSlideEye.Maximum;
         fig.UpdateBoneMatrices(true);
     }
 }
