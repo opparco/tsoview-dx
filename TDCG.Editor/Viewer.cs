@@ -55,6 +55,10 @@ namespace TDCG.Editor
         EffectMatrixVariable View_variable;
         /* for HUD */
         EffectMatrixVariable Projection_variable;
+        /* mul in domain shader */
+        EffectMatrixVariable ViewProjection_variable;
+        /* for normal transform */
+        EffectMatrixVariable WorldInverseTranspose_variable;
 
         /// <summary>
         /// effect handle for LocalBoneMats
@@ -278,6 +282,10 @@ namespace TDCG.Editor
             View_variable = effect.GetVariableBySemantic("View").AsMatrix();
             /* for HUD */
             Projection_variable = effect.GetVariableBySemantic("Projection").AsMatrix();
+            /* mul in domain shader */
+            ViewProjection_variable = effect.GetVariableBySemantic("ViewProjection").AsMatrix();
+            /* for normal transform */
+            WorldInverseTranspose_variable = effect.GetVariableBySemantic("WorldInverseTranspose").AsMatrix();
 
             LocalBoneMats_variable = effect.GetVariableByName("LocalBoneMats").AsMatrix();
             LocalBoneITMats_variable = effect.GetVariableByName("LocalBoneITMats").AsMatrix();
@@ -541,6 +549,14 @@ namespace TDCG.Editor
             View_variable.SetMatrix(Transform_View);
             /* for HUD */
             Projection_variable.SetMatrix(Transform_Projection);
+
+            Matrix view_projection_matrix = Transform_View * Transform_Projection;
+            ViewProjection_variable.SetMatrix(view_projection_matrix);
+
+            Matrix world_inverse_transepose_matrix;
+            Matrix.Invert(ref world, out world_inverse_transepose_matrix);
+            Matrix.Transpose(ref world_inverse_transepose_matrix, out world_inverse_transepose_matrix);
+            WorldInverseTranspose_variable.SetMatrix(world_inverse_transepose_matrix);
         }
 
         /// スクリーン塗りつぶし色
@@ -603,9 +619,8 @@ namespace TDCG.Editor
                         Matrix[] itmats = new Matrix[mats.Length];
                         for (int i = 0; i < mats.Length; i++)
                         {
-                            itmats[i] = mats[i];
-                            itmats[i].Invert();
-                            itmats[i].Transpose();
+                            Matrix.Invert(ref mats[i], out itmats[i]);
+                            Matrix.Transpose(ref itmats[i], out itmats[i]);
                         }
                         LocalBoneITMats_variable.SetMatrix(itmats);
 
