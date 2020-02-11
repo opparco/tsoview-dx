@@ -299,6 +299,10 @@ namespace TDCG.Editor
             {
                 tso.CreateD3DResources(device);
             };
+            figures.FigureSelectEvent += delegate (object sender, EventArgs e)
+            {
+                need_render = true;
+            };
 
             // Define an input layout to be passed to the vertex shader.
             var technique = effect.GetTechniqueByIndex(0);
@@ -400,6 +404,9 @@ namespace TDCG.Editor
         {
             Console.WriteLine("OnUserResized client size {0}x{1}", control.ClientSize.Width, control.ClientSize.Height);
 
+            if (control.ClientSize.Width == 0 || control.ClientSize.Height == 0)
+                return;
+
             if (ztex_view != null)
                 ztex_view.Dispose();
             if (ztex != null)
@@ -453,6 +460,8 @@ namespace TDCG.Editor
             bias.M44 = 1.002f;
 
             Transform_Projection = Matrix.PerspectiveRH(w * 2.0f, h * 2.0f, 1.0f, 500.0f) * bias;
+
+            need_render = true;
         }
 
         bool motion_enabled = false;
@@ -492,6 +501,8 @@ namespace TDCG.Editor
             {
                 camera.Update();
                 Transform_View = camera.ViewMatrix;
+
+                need_render = true;
             }
             if (motion_enabled)
             {
@@ -509,6 +520,13 @@ namespace TDCG.Editor
             }
         }
 
+        bool need_render = true;
+
+        /// <summary>
+        /// レンダリングは必要か
+        /// </summary>
+        public bool NeedRender { get { return need_render; } }
+
         /// <summary>
         /// レンダリングするのに用いるデリゲート型
         /// </summary>
@@ -524,6 +542,11 @@ namespace TDCG.Editor
         /// </summary>
         public void Render()
         {
+            if (!need_render)
+                return;
+
+            need_render = false;
+
             ctx.ClearDepthStencilView(ztex_view, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
             ctx.ClearRenderTargetView(buf0_view, ScreenColor);
 

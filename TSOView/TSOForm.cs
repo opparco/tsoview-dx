@@ -63,7 +63,7 @@ namespace TSOView
 
             if (viewer.InitializeApplication(this))
             {
-                viewer.figures.FigureEvent += delegate (object sender, EventArgs e)
+                viewer.figures.FigureSelectEvent += delegate (object sender, EventArgs e)
                 {
                     Figure fig;
                     if (viewer.figures.TryGetFigure(out fig))

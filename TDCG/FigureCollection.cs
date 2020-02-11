@@ -147,21 +147,22 @@ namespace TDCG
         /// <summary>
         /// フィギュア選択時に呼び出されるハンドラ
         /// </summary>
-        public event EventHandler FigureEvent;
+        public event EventHandler FigureSelectEvent;
 
         /// <summary>
         /// フィギュアを選択します。
         /// </summary>
-        /// <param name="fig_index">フィギュア番号</param>
-        public void SetFigureIndex(int fig_index)
+        /// <param name="idx">フィギュア番号</param>
+        public void SetFigureIndex(int idx)
         {
-            if (fig_index < 0)
-                fig_index = 0;
-            if (fig_index > FigureList.Count - 1)
-                fig_index = 0;
-            this.fig_index = fig_index;
-            if (FigureEvent != null)
-                FigureEvent(this, EventArgs.Empty);
+            if (idx < 0)
+                idx = 0;
+            if (idx > FigureList.Count - 1)
+                idx = 0;
+            this.fig_index = idx;
+
+            if (FigureSelectEvent != null)
+                FigureSelectEvent(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -194,11 +195,9 @@ namespace TDCG
                 fig.TSOFileList.Add(tso);
             }
             fig.UpdateNodeMapAndBoneMatrices();
-            int idx = FigureList.Count;
+            int len = FigureList.Count;
             FigureList.Add(fig);
-            SetFigureIndex(idx);
-            if (FigureEvent != null)
-                FigureEvent(this, EventArgs.Empty);
+            SetFigureIndex(len);
         }
 
         /// <summary>
@@ -226,9 +225,9 @@ namespace TDCG
                 fig = FigureList[fig_index];
             if (FigureList.Count == 0)
             {
-                int idx = FigureList.Count;
+                int len = FigureList.Count;
                 FigureList.Add(fig);
-                SetFigureIndex(idx);
+                SetFigureIndex(len);
             }
             return fig;
         }
@@ -280,8 +279,7 @@ namespace TDCG
                 fig.TSOFileList.Add(tso);
             }
             fig.UpdateNodeMapAndBoneMatrices();
-            if (FigureEvent != null)
-                FigureEvent(this, EventArgs.Empty);
+            SetFigureIndex(this.fig_index);
         }
 
         /// <summary>
@@ -331,8 +329,7 @@ namespace TDCG
                     Console.WriteLine("Error: " + ex);
                 }
                 fig.UpdateNodeMapAndBoneMatrices();
-                if (FigureEvent != null)
-                    FigureEvent(this, EventArgs.Empty);
+                SetFigureIndex(this.fig_index);
             }
         }
 
@@ -376,8 +373,7 @@ namespace TDCG
                     fig.Tmo = sav.Tmo;
                     //fig.TransformTpo();
                     fig.UpdateNodeMapAndBoneMatrices();
-                    if (FigureEvent != null)
-                        FigureEvent(this, EventArgs.Empty);
+                    SetFigureIndex(this.fig_index);
                 }
             }
             else
@@ -385,7 +381,7 @@ namespace TDCG
                 if (!append)
                     ClearFigureList();
 
-                int idx = FigureList.Count;
+                int len = FigureList.Count;
                 foreach (Figure fig in sav.figures)
                 {
                     foreach (TSOFile tso in fig.TSOFileList)
@@ -396,7 +392,7 @@ namespace TDCG
                     fig.UpdateNodeMapAndBoneMatrices();
                     FigureList.Add(fig);
                 }
-                SetFigureIndex(idx);
+                SetFigureIndex(len);
             }
         }
 
