@@ -660,7 +660,9 @@ namespace TDCG.Editor
 
                             ctx.Rasterizer.State = wired ? wireframe_rasterizer_state : default_rasterizer_state;
 
-                            technique.GetPassByIndex(i).Apply(ctx);
+                            EffectPass pass = technique.GetPassByIndex(i);
+                            toon_shader.UpdateConstantBuffer(pass);
+                            pass.Apply(ctx);
                             ctx.DrawIndexed(sub_mesh.vindices.Length, 0, 0);
                         }
                     }

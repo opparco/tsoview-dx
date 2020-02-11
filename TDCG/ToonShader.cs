@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -12,6 +13,16 @@ using Device = SharpDX.Direct3D11.Device;
 
 namespace TDCG
 {
+    /// 定数バッファに書き込む構造体
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    public struct PassDescription
+    {
+        internal float ReferenceAlpha;
+        internal float p1;
+        internal float p2;
+        internal float p3;
+    }
+
     public class ToonShader : IDisposable
     {
         Device device;
@@ -20,6 +31,7 @@ namespace TDCG
         Dictionary<string, int> techmap = new Dictionary<string, int>();
 
         EffectConstantBuffer cb_variable;
+        EffectConstantBuffer cb_per_pass_variable;
 
         EffectShaderResourceVariable ShadeTex_texture_variable;
         EffectShaderResourceVariable ColorTex_texture_variable;
@@ -28,8 +40,17 @@ namespace TDCG
         /// Direct3D定数バッファ
         /// </summary>
         public Buffer cb = null;
+        public Buffer cb_per_pass = null;
 
         Shader current_shader = null;
+
+        PassDescription pass_desc = new PassDescription()
+        {
+            ReferenceAlpha = 0.25f,
+            p1 = 0.0f,
+            p2 = 0.0f,
+            p3 = 0.0f,
+        };
 
         public ToonShader(Device device, Effect effect)
         {
@@ -37,6 +58,7 @@ namespace TDCG
             this.effect = effect;
 
             cb_variable = effect.GetConstantBufferByName("cb");
+            cb_per_pass_variable = effect.GetConstantBufferByName("cb_per_pass");
 
             ShadeTex_texture_variable = effect.GetVariableByName("ShadeTex_texture").AsShaderResource();
             ColorTex_texture_variable = effect.GetVariableByName("ColorTex_texture").AsShaderResource();
@@ -56,6 +78,14 @@ namespace TDCG
                 BindFlags = BindFlags.ConstantBuffer,
             });
             cb_variable.SetConstantBuffer(cb);
+
+            cb_per_pass = new Buffer(device, new BufferDescription()
+            {
+                SizeInBytes = 16,
+                Usage = ResourceUsage.Default,
+                BindFlags = BindFlags.ConstantBuffer,
+            });
+            cb_per_pass_variable.SetConstantBuffer(cb_per_pass);
         }
 
         /// techmapを読み込みます。
@@ -111,7 +141,27 @@ namespace TDCG
                     ColorTex_texture_variable.SetResource(d3d_tex_SR_view);
             }
 
-            technique = effect.GetTechniqueByIndex(techmap[shader.technique_name]);
+            try
+            {
+                int idx = techmap[shader.technique_name];
+                technique = effect.GetTechniqueByIndex(idx);
+            }
+            catch (KeyNotFoundException)
+            {
+                Console.WriteLine("Error: shader technique not found. " + shader.technique_name);
+                return;
+            }
+        }
+
+        public void UpdateConstantBuffer(EffectPass pass)
+        {
+            using (EffectVariable annotation = pass.GetAnnotationByName("ReferenceAlpha"))
+                pass_desc.ReferenceAlpha = annotation.IsValid ? annotation.AsScalar().GetFloat() : 0.25f;
+
+            //
+            // rewrite constant buffer
+            //
+            device.ImmediateContext.UpdateSubresource(ref pass_desc, cb_per_pass);
         }
 
         /// <summary>
@@ -119,6 +169,9 @@ namespace TDCG
         /// </summary>
         public void Dispose()
         {
+            if (cb_per_pass != null)
+                cb_per_pass.Dispose();
+
             if (cb != null)
                 cb.Dispose();
 
