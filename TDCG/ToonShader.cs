@@ -18,7 +18,7 @@ namespace TDCG
     public struct PassDescription
     {
         internal float ReferenceAlpha;
-        internal float p1;
+        internal float LP1;
         internal float p2;
         internal float p3;
     }
@@ -47,7 +47,7 @@ namespace TDCG
         PassDescription pass_desc = new PassDescription()
         {
             ReferenceAlpha = 0.25f,
-            p1 = 0.0f,
+            LP1 = 0.6f,
             p2 = 0.0f,
             p3 = 0.0f,
         };
@@ -157,6 +157,9 @@ namespace TDCG
         {
             using (EffectVariable annotation = pass.GetAnnotationByName("ReferenceAlpha"))
                 pass_desc.ReferenceAlpha = annotation.IsValid ? annotation.AsScalar().GetFloat() : 0.25f;
+
+            using (EffectVariable annotation = pass.GetAnnotationByName("LP1"))
+                pass_desc.LP1 = annotation.IsValid ? annotation.AsScalar().GetFloat() : 0.6f;
 
             //
             // rewrite constant buffer
