@@ -381,6 +381,8 @@ namespace TDCG.Editor
         public void SwitchFillMode()
         {
             wired = !wired;
+
+            need_render = true;
         }
 
         static SharpDX.DXGI.SampleDescription DetectSampleDescription(Device device, SharpDX.DXGI.Format format)
